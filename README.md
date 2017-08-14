@@ -1,0 +1,2 @@
+# kcp_csserver
+用kcp_warpper跟dotnetty的lib做一个简单的kcpserver.目前还没有完成

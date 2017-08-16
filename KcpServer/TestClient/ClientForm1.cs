@@ -50,6 +50,16 @@ namespace TestClient
                     }
                     );
             };
+            kcpclient.OnConnected = (sid) =>
+            {
+                this.Invoke(
+                    new Action(() =>
+                    {
+                        this.Text = sid.ToString();
+                    })
+                    );
+
+            };
 
             kcpclient.Connect(remoteipep);
         }

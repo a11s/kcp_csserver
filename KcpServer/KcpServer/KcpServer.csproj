@@ -167,6 +167,7 @@
     <Compile Include="PeerContext.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerConfig.cs" />
     <Compile Include="UdpServer.cs" />
     <Compile Include="UdpServerHandler.cs" />
   </ItemGroup>

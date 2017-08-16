@@ -126,7 +126,7 @@
             this.timer1.Interval = 10;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // Form1
+            // ClientForm1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -140,8 +140,8 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox_sid);
             this.Controls.Add(this.button_init);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "ClientForm1";
+            this.Text = "CForm1";
             this.ResumeLayout(false);
             this.PerformLayout();
 

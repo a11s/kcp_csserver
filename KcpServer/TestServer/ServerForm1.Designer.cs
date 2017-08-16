@@ -50,15 +50,15 @@
             this.button_start.UseVisualStyleBackColor = true;
             this.button_start.Click += new System.EventHandler(this.button_start_Click);
             // 
-            // Form1
+            // ServerForm1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(403, 82);
             this.Controls.Add(this.button_start);
             this.Controls.Add(this.textBox1);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "ServerForm1";
+            this.Text = "SForm1";
             this.ResumeLayout(false);
             this.PerformLayout();
 

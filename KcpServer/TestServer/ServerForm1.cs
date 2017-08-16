@@ -34,9 +34,18 @@ namespace TestServer
             server = new KcpServer.KCPServer();
             Program.App = new TestApplication();
             var sysid = "Test".ToCharArray().Select(a => (byte)a).ToArray();
-            var appid = "App1".ToCharArray().Select(a => (byte)a).ToArray();
+            var appid = "App1".ToCharArray().Select(a => (byte)a).ToArray();            
 
-            var t = server.AsyncStart(Program.App, sysid, appid, ipep);
+            var sc = KcpServer.ServerConfig.Create()
+                .SetSysId(sysid)
+                .SetApplicationData(appid)
+                .BindApplication(Program.App)
+                .SetTimeout(TimeSpan.FromSeconds(10))
+                .SetFiberPool(new Utilities.FiberPool(2))
+                .SetLocalIpep(ipep);
+
+            var t = server.AsyncStart(sc);
+
             t.Wait();
 
         }

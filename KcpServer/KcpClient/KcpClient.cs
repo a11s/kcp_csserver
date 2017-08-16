@@ -57,6 +57,13 @@ namespace KcpClient
 #endif
         };
 
+        public Action<int> OnConnected = (sid) =>
+        {
+#if DEBUG
+            Console.WriteLine(sid);
+#endif
+        };
+
         public ConcurrentQueue<byte[]> Incoming1 { get => Incoming; set => Incoming = value; }
         public int SessionId { get; private set; }
 
@@ -102,7 +109,7 @@ namespace KcpClient
             udp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             bool bNewBehavior = false;
             byte[] dwBytesReturned = new byte[4];
-            udp.IOControl((int)SIO_UDP_CONNRESET, new byte[] { 0 }, dwBytesReturned);
+            udp.IOControl((int)SIO_UDP_CONNRESET, BitConverter.GetBytes(bNewBehavior), dwBytesReturned);
             defpb = new ToServerPackBuilder(defpb.GetSysIdBuf(), SessionId);
             remote_ipep = ipep;
             udp.Connect(remote_ipep);
@@ -173,6 +180,7 @@ namespace KcpClient
                                 this.SessionId = tmp;
                                 defpb = new ToServerPackBuilder(defpb.GetSysIdBuf(), this.SessionId);
                                 debug($"{nameof(Handshake)}:{nameof(SessionId)}={SessionId}");
+                                OnConnected?.Invoke(tmp);
                             }
                             else
                             {

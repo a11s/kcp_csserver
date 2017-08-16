@@ -93,12 +93,14 @@ namespace KcpServer
                 }
                 else
                 {
-                    if (item.Value.Fiber.State == WorkingState.Free)
+                    var stat = item.Value.Fiber.State;
+                    if (stat == WorkingState.Working || stat == WorkingState.Free)
                     {
                         item.Value.Fiber.Enqueue(() =>
                         {
-                        //让Peer处理消息
-                        item.Value.UpdateInternal();
+
+                            //让Peer处理消息
+                            item.Value.UpdateInternal();
                         });
                     }
                 }
@@ -171,7 +173,7 @@ namespace KcpServer
             return this;
         }
 
-        public static ConnectionManager Create(int MaxConnection = 2)
+        public static ConnectionManager Create(int MaxConnection )
         {
 
             var cm = new ConnectionManager();

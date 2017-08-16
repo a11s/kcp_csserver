@@ -29,14 +29,17 @@ namespace KcpServer
             UdpServer server = new UdpServer();
             FiberPool fp = new FiberPool(2);
             TaskFactory tf = new TaskFactory();
-            var cm = ConnectionManager.Create()
+            var cm = ConnectionManager.Create(2)
                 .SetSysId(_4BytesId)
                 .SetApplicationData(AppId)
                 .BindApplication(app)
                 .SetTimeout(TimeSpan.FromSeconds(10))
                 .SetFiberPool(fp)
                 ;
-
+            
+            
+                
+                
             var t = server.InitServerAsync(new UdpServerHandler(cm), localipep);
             var t2 = t.ContinueWith((a) =>
             {
@@ -64,6 +67,47 @@ namespace KcpServer
             }, TaskContinuationOptions.AttachedToParent);
             return t3;
 
+        }
+
+
+        public Task AsyncStart(ServerConfig sc) {
+            UdpServer server = new UdpServer();
+            
+            TaskFactory tf = new TaskFactory();
+            var cm = ConnectionManager.Create(2)
+                .SetSysId(sc.SysId)
+                .SetApplicationData(sc.AppId)
+                .BindApplication(sc.App)
+                .SetTimeout(sc.Timeout)
+                .SetFiberPool(sc.Fp)
+                ;
+            
+            var t = server.InitServerAsync(new UdpServerHandler(cm), sc.Localipep);
+            var t2 = t.ContinueWith((a) =>
+            {
+                if (a.Result == false)
+                {
+                    debug("init error");
+                }
+                else
+                {
+                    tf.StartNew(() => UpdatePeersThreadLoop(cm), TaskCreationOptions.LongRunning);
+                }
+            }, TaskContinuationOptions.AttachedToParent);
+
+            var t3 = t.ContinueWith((a) =>
+            {
+                if (a.Result == false)
+                {
+                    debug("init error");
+                }
+                else
+                {
+                    sc.App.Setup();
+                }
+
+            }, TaskContinuationOptions.AttachedToParent);
+            return t3;
         }
 
         void UpdatePeersThreadLoop(ConnectionManager cm)

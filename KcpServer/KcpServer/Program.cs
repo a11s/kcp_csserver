@@ -19,7 +19,7 @@ namespace KcpServer
             ApplicationBase app = new GWApp();
             FiberPool fp = new FiberPool(2);
             TaskFactory tf = new TaskFactory();
-            var cm = ConnectionManager.Create()
+            var cm = ConnectionManager.Create(2)
                 .SetSysId("Test".ToArray().Select(a => (byte)a).ToArray())
                 .SetApplicationData("App1".ToArray().Select(a => (byte)a).ToArray())
                 .BindApplication(app)

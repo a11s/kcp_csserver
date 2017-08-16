@@ -23,8 +23,8 @@ namespace KcpServer
         protected override void PrepCodecs(PeerContext x)
         {
             debug($"kcp {nameof(PrepCodecs)}");
-            x.Encoder = new Codec.KcpEncoder();
-            x.Decoder = new Codec.KcpDecoder();
+            x.Encoder = new Codec.KcpEncoder(x);
+            x.Decoder = new Codec.KcpDecoder(x);
         }
     }
 }

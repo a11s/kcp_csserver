@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Net;
 using KcpServer.Codec;
+using kcpwarpper;
 
 namespace KcpServer
 {
@@ -9,6 +10,8 @@ namespace KcpServer
     /// </summary>
     public class PeerContext
     {
+        internal unsafe IKCPCB* EncoderData;
+
         public PeerContext()
         {
         }

@@ -24,6 +24,7 @@ namespace KcpServer
         ConcurrentQueue<byte[]> OutgoingData = new ConcurrentQueue<byte[]>();
 
         ToServerPackBuilder defpb;
+        Codec.BaseEncoder defEncoder;
 
         public virtual void OnDisconnect(DateTime lastPackTime, TimeSpan t)
         {
@@ -33,8 +34,12 @@ namespace KcpServer
         internal void OnTimeout(DateTime lastPackTime, TimeSpan t)
         {
             this.OnDisconnect(lastPackTime, t);
-            var sendbuf = defpb.MakeTimeoutReturn((int)ClientErrorCode.SERVER_TIMEOUT,SessionId);
+            var sendbuf = defpb.MakeTimeoutReturn((int)ClientErrorCode.SERVER_TIMEOUT, SessionId);
             this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(sendbuf.Length).WriteBytes(sendbuf), Context.RemoteEP));
+
+            this.Context.Encoder.Close();
+            this.Context.Decoder.Close();
+
         }
 
 
@@ -65,6 +70,7 @@ namespace KcpServer
             this.Context = pc;
             var fp = pc.ConnectionManager.Workfiberpool;
             defpb = new ToServerPackBuilder(pc.ConnectionManager.SysId, pc.SessionId);
+            defEncoder = pc.Encoder;
             this._Fiber = new Fiber(fp, this.GetHashCode());
         }
 
@@ -76,8 +82,14 @@ namespace KcpServer
             }
             while (OutgoingData.TryDequeue(out var buf2))
             {
-                this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(buf2.Length).WriteBytes(buf2), Context.RemoteEP));
+                ProcessSendOutgoing(buf2);                
             }
+        }
+
+        private void ProcessSendOutgoing(byte[] data)
+        {
+            var sendbuf = defEncoder.Encode(data);
+            this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(sendbuf.Length).WriteBytes(sendbuf), Context.RemoteEP));
         }
     }
 }

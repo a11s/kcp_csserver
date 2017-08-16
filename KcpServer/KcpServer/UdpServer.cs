@@ -9,7 +9,7 @@ using Utilities;
 
 namespace KcpServer
 {
-    public class UDPServer
+    public class UdpServer
     {
         public Action<string> debug = (s) =>
         {
@@ -17,7 +17,6 @@ namespace KcpServer
             Console.WriteLine(s);
 #endif
         };
-
 
         IOServer server = new IOServer();
         ConnectionManager cm;
@@ -33,7 +32,7 @@ namespace KcpServer
                 .SetFiberPool(sc.Fp)
                 ;
 
-            var t = server.InitServerAsync(new UdpServerHandler(cm), sc.Localipep);
+            var t = server.InitServerAsync(GetServerHandler(cm), sc.Localipep);
             var t2 = t.ContinueWith((a) =>
             {
                 if (a.Result == false)
@@ -76,6 +75,11 @@ namespace KcpServer
                 cm.CheckTimeout();
                 sw.SpinOnce();
             }
+        }
+
+        protected virtual DotNetty.Transport.Channels.ChannelHandlerAdapter GetServerHandler(ConnectionManager cm)
+        {
+            return new UdpServerHandler(cm);
         }
     }
 }

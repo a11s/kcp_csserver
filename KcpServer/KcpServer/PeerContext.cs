@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Net;
+using KcpServer.Codec;
 
 namespace KcpServer
 {
@@ -17,5 +18,7 @@ namespace KcpServer
         public EndPoint LocalEP { get; set; }
         public int SessionId { get; internal set; }
         public ConnectionManager ConnectionManager { get; internal set; }
+        public BaseEncoder Encoder { get; internal set; }
+        public BaseDecoder Decoder { get; internal set; }
     }
 }

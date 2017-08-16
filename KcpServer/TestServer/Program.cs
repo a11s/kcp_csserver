@@ -26,7 +26,7 @@ namespace TestServer
         }
         public static void StartServer(IPEndPoint ipep)
         {
-            Server = new KcpServer.UDPServer();
+            Server = new KcpServer.KcpServer();
             App = new TestApplication();
             var sysid = "Test".ToCharArray().Select(a => (byte)a).ToArray();
             var appid = "App1".ToCharArray().Select(a => (byte)a).ToArray();
@@ -45,7 +45,7 @@ namespace TestServer
 
             t.Wait();
         }
-        public static KcpServer.UDPServer Server;
+        public static KcpServer.UdpServer Server;
         public static TestApplication App;
     }
 }

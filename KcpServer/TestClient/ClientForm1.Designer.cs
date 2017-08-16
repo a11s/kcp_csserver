@@ -1,6 +1,6 @@
 ﻿namespace TestClient
 {
-    partial class Form1
+    partial class ClientForm1
     {
         /// <summary>
         /// Required designer variable.

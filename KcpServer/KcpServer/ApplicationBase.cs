@@ -29,15 +29,14 @@ namespace KcpServer
         /// <returns></returns>
         public abstract PeerBase CreatePeer(PeerContext peerContext);
 
-        internal virtual void Setup()
-        {
-            Console.WriteLine($"{nameof(ApplicationBase)} {nameof(Setup)}");
-        }
+        public abstract void Setup();
 
-        internal virtual void TearDown()
+        public abstract void TearDown();
+
+        public void Close()
         {
             this.ConnMan.SyncClose(TimeSpan.FromSeconds(2));
-            Console.WriteLine($"{nameof(ApplicationBase)} {nameof(TearDown)}");
+            TearDown();
         }
     }
 

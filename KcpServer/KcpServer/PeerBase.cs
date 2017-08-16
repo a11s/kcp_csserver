@@ -34,7 +34,7 @@ namespace KcpServer
         {
             this.OnDisconnect(lastPackTime, t);
             var sendbuf = defpb.MakeTimeoutReturn(ToServerPackBuilder.SERVER_TIMEOUT,SessionId);
-            this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer().WriteBytes(sendbuf), Context.RemoteEP));
+            this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(sendbuf.Length).WriteBytes(sendbuf), Context.RemoteEP));
         }
 
 
@@ -76,7 +76,7 @@ namespace KcpServer
             }
             while (OutgoingData.TryDequeue(out var buf2))
             {
-                this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer().WriteBytes(buf2), Context.RemoteEP));
+                this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(buf2.Length).WriteBytes(buf2), Context.RemoteEP));
             }
         }
     }

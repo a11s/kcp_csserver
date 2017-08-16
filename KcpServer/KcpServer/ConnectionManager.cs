@@ -78,7 +78,7 @@ namespace KcpServer
                     try
                     {
                         item.Value.OnTimeout(item.Value.LastPackTime, t);
-                        
+
                     }
                     catch (Exception ex)
                     {
@@ -93,12 +93,14 @@ namespace KcpServer
                 }
                 else
                 {
-                    item.Value.Fiber.Enqueue(() =>
+                    if (item.Value.Fiber.State == WorkingState.Free)
                     {
+                        item.Value.Fiber.Enqueue(() =>
+                        {
                         //让Peer处理消息
                         item.Value.UpdateInternal();
-
-                    });
+                        });
+                    }
                 }
             }
             if (removelist != null)
@@ -181,10 +183,6 @@ namespace KcpServer
             return cm;
         }
 
-        public static void Start(ConnectionManager cm)
-        {
-
-        }
 
     }
 

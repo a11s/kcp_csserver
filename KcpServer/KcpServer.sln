@@ -11,6 +11,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Utilities", "Utilities\Util
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KcpClient", "KcpClient\KcpClient.csproj", "{A2A74321-0F1A-4FDD-8EA3-21C8F32AD730}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestServer", "TestServer\TestServer.csproj", "{3C634EE3-7558-4393-91F7-CB34DE76A5E9}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Utilities\Utilities.projitems*{16278a10-a238-41e5-ac2a-d9316489fa32}*SharedItemsImports = 4
@@ -48,6 +50,14 @@ Global
 		{A2A74321-0F1A-4FDD-8EA3-21C8F32AD730}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A2A74321-0F1A-4FDD-8EA3-21C8F32AD730}.Release|x64.ActiveCfg = Release|Any CPU
 		{A2A74321-0F1A-4FDD-8EA3-21C8F32AD730}.Release|x64.Build.0 = Release|Any CPU
+		{3C634EE3-7558-4393-91F7-CB34DE76A5E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C634EE3-7558-4393-91F7-CB34DE76A5E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C634EE3-7558-4393-91F7-CB34DE76A5E9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3C634EE3-7558-4393-91F7-CB34DE76A5E9}.Debug|x64.Build.0 = Debug|Any CPU
+		{3C634EE3-7558-4393-91F7-CB34DE76A5E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C634EE3-7558-4393-91F7-CB34DE76A5E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C634EE3-7558-4393-91F7-CB34DE76A5E9}.Release|x64.ActiveCfg = Release|Any CPU
+		{3C634EE3-7558-4393-91F7-CB34DE76A5E9}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

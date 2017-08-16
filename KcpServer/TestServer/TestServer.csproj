@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{14A27791-39A5-454D-B4DD-19C0CEE73D01}</ProjectGuid>
+    <ProjectGuid>{3C634EE3-7558-4393-91F7-CB34DE76A5E9}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TestClient</RootNamespace>
-    <AssemblyName>TestClient</AssemblyName>
+    <RootNamespace>TestServer</RootNamespace>
+    <AssemblyName>TestServer</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -24,14 +24,13 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -50,16 +49,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientForm1.cs">
+    <Compile Include="ServerForm1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ClientForm1.Designer.cs">
-      <DependentUpon>ClientForm1.cs</DependentUpon>
+    <Compile Include="ServerForm1.Designer.cs">
+      <DependentUpon>ServerForm1.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ClientForm1.resx">
-      <DependentUpon>ClientForm1.cs</DependentUpon>
+    <Compile Include="TestPeer.cs" />
+    <Compile Include="TestApplication.cs" />
+    <EmbeddedResource Include="ServerForm1.resx">
+      <DependentUpon>ServerForm1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -84,9 +85,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\KcpClient\KcpClient.csproj">
-      <Project>{a2a74321-0f1a-4fdd-8ea3-21c8f32ad730}</Project>
-      <Name>KcpClient</Name>
+    <ProjectReference Include="..\KcpServer\KcpServer.csproj">
+      <Project>{16278a10-a238-41e5-ac2a-d9316489fa32}</Project>
+      <Name>KcpServer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

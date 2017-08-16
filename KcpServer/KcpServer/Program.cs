@@ -4,6 +4,7 @@ using DotNetty.Transport.Channels.Sockets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities;
@@ -26,7 +27,7 @@ namespace KcpServer
                 .SetFiberPool(fp)
                 ;
 
-            var t = server.InitServerAsync(new UdpServerHandler(cm));
+            var t = server.InitServerAsync(new UdpServerHandler(cm), new System.Net.IPEndPoint(IPAddress.Any, 1000));
             var t2 = t.ContinueWith((a) =>
              {
                  if (a.Result == false)
@@ -35,7 +36,7 @@ namespace KcpServer
                  }
                  else
                  {
-                     tf.StartNew(() => ThreadLoop(cm), TaskCreationOptions.LongRunning);
+                     tf.StartNew(() => CheckTimeoutThreadLoop(cm), TaskCreationOptions.LongRunning);
                  }
              }, TaskContinuationOptions.AttachedToParent);
 
@@ -59,12 +60,12 @@ namespace KcpServer
             Console.WriteLine("Press any key to exit");
             Console.ReadKey();
         }
-        static void ThreadLoop(ConnectionManager cm)
+        static void CheckTimeoutThreadLoop(ConnectionManager cm)
         {
             while (cm.App.ApplicationRunning)
             {
                 cm.CheckTimeout();
-                Task.Delay(cm.ConnectionTimeout);
+                System.Threading.Thread.Sleep(1000);
             }
         }
 
@@ -73,6 +74,16 @@ namespace KcpServer
             public override PeerBase CreatePeer(PeerContext peerContext)
             {
                 return new PlayerConn(peerContext);
+            }
+
+            public override void Setup()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void TearDown()
+            {
+                throw new NotImplementedException();
             }
         }
 

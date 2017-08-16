@@ -45,6 +45,14 @@ namespace Utilities
             }
             debug($"{nameof(FiberPool)} started");
         }
+
+
+
+        internal int GetWorkingQueueLength(int fiberid)
+        {
+            return works[fiberid].Count;
+        }
+
         private void DoWork(object arg)
         {
             var i = (int)arg;

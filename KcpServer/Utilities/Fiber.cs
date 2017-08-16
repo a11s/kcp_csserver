@@ -27,6 +27,42 @@ namespace Utilities
             fp.Enqueue(fiberid, t);
         }
 
+        const int WS_FREE = 0;
+        const int WS_WORKING = 10;
+        const int WS_BUSY = 1000;
+        const int WS_DOS = 1000;
 
+        public WorkingState State
+        {
+            get
+            {
+                var cnt = fp.GetWorkingQueueLength(this.fiberid);
+                if (cnt <= WS_FREE)
+                {
+                    return WorkingState.Free;
+                }
+                if (cnt <= WS_WORKING)
+                {
+                    return WorkingState.Working;
+                }
+                if (cnt <= WS_BUSY)
+                {
+                    return WorkingState.Busy;
+                }
+                else
+                {
+                    return WorkingState.DenialOfService;
+                }
+            }
+        }
+    }
+
+    public enum WorkingState
+    {
+        Free = 0,
+        Working = 1,
+        Busy = 2,
+
+        DenialOfService = 3,
     }
 }

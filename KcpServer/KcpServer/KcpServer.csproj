@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{16278A10-A238-41E5-AC2A-D9316489FA32}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>KcpServer</RootNamespace>
     <AssemblyName>KcpServer</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
@@ -50,6 +50,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetty.Buffers, Version=0.4.6.0, Culture=neutral, PublicKeyToken=bc13ca065fa06c29, processorArchitecture=MSIL">
@@ -159,6 +162,7 @@
   <ItemGroup>
     <Compile Include="ApplicationBase.cs" />
     <Compile Include="ConnectionManager.cs" />
+    <Compile Include="KCPServer.cs" />
     <Compile Include="PeerBase.cs" />
     <Compile Include="PeerContext.cs" />
     <Compile Include="Program.cs" />

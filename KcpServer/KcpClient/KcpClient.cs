@@ -79,12 +79,30 @@ namespace KcpClient
         {
             Connect(new IPEndPoint(IPAddress.Parse(ip), port));
         }
+        #region IOControl
+        const uint IOC_VOID = 0x20000000;/* no parameters */
+        const uint IOC_OUT = 0x40000000; /* copy out parameters */
+        const uint IOC_IN = 0x80000000;/* copy in parameters */
+        const uint IOC_UNIX = 0x00000000;
+        const uint IOC_WS2 = 0x08000000;
+        const uint IOC_PROTOCOL = 0x10000000;
+        const uint IOC_VENDOR = 0x18000000;
+        uint _WSAIO(uint x, uint y) => (IOC_VOID | x | y);
+        uint _WSAIOR(uint x, uint y) => (IOC_OUT | (x) | (y));
+        uint _WSAIOW(uint x, uint y) => (IOC_IN | (x) | (y));
+        //uint _WSAIORW(uint x, uint y) => (IOC_INOUT | (x) | (y));
+        uint SIO_UDP_CONNRESET => _WSAIOW(IOC_VENDOR, 12);
+        #endregion
+
         public void Connect(IPEndPoint ipep)
         {
             IOThreads.Clear();
             Incoming = new ConcurrentQueue<byte[]>();
             Outgoing = new ConcurrentQueue<byte[]>();
             udp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            bool bNewBehavior = false;
+            byte[] dwBytesReturned = new byte[4];
+            udp.IOControl((int)SIO_UDP_CONNRESET, new byte[] { 0 }, dwBytesReturned);
             defpb = new ToServerPackBuilder(defpb.GetSysIdBuf(), SessionId);
             remote_ipep = ipep;
             udp.Connect(remote_ipep);
@@ -116,7 +134,7 @@ namespace KcpClient
         }
 
         DateTime lastHartbeatTime = DateTime.Now;
-        protected void Hartbeat()
+        protected void Heartbeat()
         {
 
             if (DateTime.Now.Subtract(lastHartbeatTime).TotalSeconds < 1)
@@ -158,9 +176,8 @@ namespace KcpClient
                             }
                             else
                             {
-                                //error code
-                                throw new NotImplementedException($"{nameof(IOLoop)} reserved");
-                                var errcode = BitConverter.ToInt32(data, sizeof(int));
+                                //error code                                
+                                var errcode = BitConverter.ToInt32(data, 0);
                                 InternalError(errcode);
 
                             }
@@ -194,7 +211,7 @@ namespace KcpClient
                 }
                 else
                 {
-                    //Hartbeat();
+                    Heartbeat();
                 }
             }
             debug($"Thread {tid} exit");

@@ -5,12 +5,13 @@ using DotNetty.Transport.Channels.Sockets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace KcpServer
 {
-    public class UdpServer
+    internal class UdpServer
     {
         void debug(string s)
         {
@@ -20,11 +21,11 @@ namespace KcpServer
         }
         //if tcp use ServerBootstrap
         Bootstrap bootstrap;
-        IChannel channel;
+        //IChannel channel;
         IEventLoopGroup iogroup;
         //if tcp you need workers
         //IEventLoopGroup workergroup;
-        public Task<bool> InitServerAsync(ChannelHandlerAdapter handler)
+        internal Task<bool> InitServerAsync(ChannelHandlerAdapter handler,IPEndPoint localipep)
         {
             iogroup = new MultithreadEventLoopGroup();
             //workergroup = new MultithreadEventLoopGroup();
@@ -39,8 +40,8 @@ namespace KcpServer
                     .Channel<SocketDatagramChannel>()
                     .Option(ChannelOption.SoBroadcast, true)
                     .Handler(handler);
-                var _channel = bootstrap.BindAsync(1000);
-                channel = _channel.Result;
+                var _channel = bootstrap.BindAsync(localipep);
+                //channel = _channel.Result;
                 debug("inited");
                 return Task.FromResult(true);
             }
@@ -51,11 +52,6 @@ namespace KcpServer
                 iogroup.ShutdownGracefullyAsync();
             }
             return Task.FromResult(false);
-        }
-
-        internal void Start()
-        {
-            
         }
     }
 

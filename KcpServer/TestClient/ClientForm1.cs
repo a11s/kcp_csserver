@@ -14,9 +14,9 @@ using System.Runtime.InteropServices;
 
 namespace TestClient
 {
-    public unsafe partial class Form1 : Form
+    public unsafe partial class ClientForm1 : Form
     {
-        public Form1()
+        public ClientForm1()
         {
             InitializeComponent();
         }
@@ -31,7 +31,7 @@ namespace TestClient
         {
             //if (kcpclient == null)
             {
-                kcpclient = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "App1".ToCharArray().Select(a => (byte)a).ToArray());
+                kcpclient = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "testpeer".ToCharArray().Select(a => (byte)a).ToArray());
             }
             var userid = uint.Parse(textBox_sid.Text);
             var arr = textBox_local.Text.Split(":"[0]);
@@ -40,9 +40,17 @@ namespace TestClient
             remoteipep = new IPEndPoint(IPAddress.Parse(arr[0]), int.Parse(arr[1]));
             kcpclient.OnOperationResponse = (buf) =>
             {
-                Console.WriteLine(Encoding.UTF8.GetString(buf));
+                var i = BitConverter.ToInt64(buf, 0);
+                Console.WriteLine($"rec{i}");
+                Task.Run(
+                    () =>
+                    {
+                        //System.Threading.Thread.Sleep(1000);//过一秒以后发送返回
+                        kcpclient.SendOperationRequest(BitConverter.GetBytes(i + 1));
+                    }
+                    );
             };
-            
+
             kcpclient.Connect(remoteipep);
         }
 
@@ -70,7 +78,9 @@ namespace TestClient
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-            kcpclient.SendOperationRequest(Encoding.UTF8.GetBytes("烫烫烫烫烫"));
+            //kcpclient.SendOperationRequest(Encoding.UTF8.GetBytes("烫烫烫烫烫"));
+
+            kcpclient.SendOperationRequest(BitConverter.GetBytes(UInt64.MinValue));
         }
     }
 }

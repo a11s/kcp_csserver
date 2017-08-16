@@ -59,7 +59,7 @@ namespace KcpServer
                     {
                         debug("app refuse connect request");
                         byte[] hsbuff = defpb.MakeHandshakeReturn(ToServerPackBuilder.APP_REFUSED);
-                        ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer().WriteBytes(hsbuff), msg.Sender));
+                        ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer(hsbuff.Length).WriteBytes(hsbuff), msg.Sender));
                         return;
                     }
                     var newsid = connMan.EnumANewPeerId();
@@ -70,7 +70,7 @@ namespace KcpServer
                         connMan.RecycleSession(newsid);
                         debug("app refuse create player");
                         byte[] hsbuff = defpb.MakeHandshakeReturn(ToServerPackBuilder.APP_REFUSED2);
-                        ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer().WriteBytes(hsbuff), msg.Sender));
+                        ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer(hsbuff.Length).WriteBytes(hsbuff), msg.Sender));
                         return;
                     }
                     else
@@ -82,11 +82,11 @@ namespace KcpServer
                         byte[] hsbuff = defpb.MakeHandshakeReturn(newsid);
                         //ctx.WriteAndFlushAsync(hsbuff);
                         //ctx.WriteAsync(hsbuff);
-                        ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer().WriteBytes(hsbuff), msg.Sender));
+                        ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer(hsbuff.Length).WriteBytes(hsbuff), msg.Sender));
                         connMan.AddConn(p);
 
 
-                        debug($"new session established {newsid}");
+                        debug($"{nameof(ConnectionManager)}:new session established {newsid}");
 
                     }
 

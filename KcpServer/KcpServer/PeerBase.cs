@@ -33,7 +33,7 @@ namespace KcpServer
         internal void OnTimeout(DateTime lastPackTime, TimeSpan t)
         {
             this.OnDisconnect(lastPackTime, t);
-            var sendbuf = defpb.MakeTimeoutReturn(ToServerPackBuilder.SERVER_TIMEOUT,SessionId);
+            var sendbuf = defpb.MakeTimeoutReturn((int)ClientErrorCode.SERVER_TIMEOUT,SessionId);
             this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(sendbuf.Length).WriteBytes(sendbuf), Context.RemoteEP));
         }
 

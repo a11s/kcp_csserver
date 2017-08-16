@@ -58,36 +58,44 @@ namespace KcpServer
                     if (!connMan.App.PreCreatePeer(x))
                     {
                         debug("app refuse connect request");
-                        byte[] hsbuff = defpb.MakeHandshakeReturn(ToServerPackBuilder.APP_REFUSED);
+                        byte[] hsbuff = defpb.MakeHandshakeReturn((int)ClientErrorCode.APP_REFUSED);
                         ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer(hsbuff.Length).WriteBytes(hsbuff), msg.Sender));
                         return;
                     }
                     var newsid = connMan.EnumANewPeerId();
-                    x.SessionId = newsid;
-                    PeerBase p = connMan.App.CreatePeer(x);
-                    if (p == null)
+                    if (newsid == ConnectionManager.MAX_CONN_EXCEED)
                     {
-                        connMan.RecycleSession(newsid);
-                        debug("app refuse create player");
-                        byte[] hsbuff = defpb.MakeHandshakeReturn(ToServerPackBuilder.APP_REFUSED2);
+                        debug("server refuse connect request");
+                        byte[] hsbuff = defpb.MakeHandshakeReturn((int)ClientErrorCode.SERVER_REFUSED);
                         ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer(hsbuff.Length).WriteBytes(hsbuff), msg.Sender));
                         return;
                     }
                     else
                     {
-                        p.LastPackTime = DateTime.Now;
-                        p.Context.RemoteEP = msg.Sender;
-                        p.Context.LocalEP = msg.Recipient;
-                        p.Channel = ctx.Channel;
-                        byte[] hsbuff = defpb.MakeHandshakeReturn(newsid);
-                        //ctx.WriteAndFlushAsync(hsbuff);
-                        //ctx.WriteAsync(hsbuff);
-                        ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer(hsbuff.Length).WriteBytes(hsbuff), msg.Sender));
-                        connMan.AddConn(p);
+                        x.SessionId = newsid;
+                        PeerBase p = connMan.App.CreatePeer(x);
+                        if (p == null)
+                        {
+                            connMan.RecycleSession(newsid);
+                            debug("app refuse create player");
+                            byte[] hsbuff = defpb.MakeHandshakeReturn((int)ClientErrorCode.APP_REFUSED2);
+                            ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer(hsbuff.Length).WriteBytes(hsbuff), msg.Sender));
+                            return;
+                        }
+                        else
+                        {
+                            p.LastPackTime = DateTime.Now;
+                            p.Context.RemoteEP = msg.Sender;
+                            p.Context.LocalEP = msg.Recipient;
+                            p.Channel = ctx.Channel;
+                            byte[] hsbuff = defpb.MakeHandshakeReturn(newsid);
+                            //ctx.WriteAndFlushAsync(hsbuff);
+                            //ctx.WriteAsync(hsbuff);
+                            ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer(hsbuff.Length).WriteBytes(hsbuff), msg.Sender));
+                            connMan.AddConn(p);
+                            debug($"{nameof(ConnectionManager)}:new session established {newsid}");
 
-
-                        debug($"{nameof(ConnectionManager)}:new session established {newsid}");
-
+                        }
                     }
 
                 }

@@ -38,33 +38,33 @@ namespace KcpClient
             SessionId = sid;
             applicationData = appData;
         }
-        public Action OnDisconnect = () =>
-        {
-#if DEBUG
-            Console.WriteLine("断了,服务器不认了");
-#endif
-        };
-        public Action<byte[]> OnOperationResponse = (b) =>
-        {
-#if DEBUG
-            Console.WriteLine("数据来了");
-#endif
-        };
-        public Action<string> debug = (s) =>
+
+        public static Action<string> debug = (s) =>
         {
 #if DEBUG
             Console.WriteLine(s);
 #endif
         };
 
-        public Action<int> OnConnected = (sid) =>
+        public Action<ClientErrorCode> OnError = (e) =>
         {
-#if DEBUG
-            Console.WriteLine(sid);
-#endif
+            debug?.Invoke($"{nameof(OnError)}:{e}");
+        };
+        public Action OnDisconnect = () =>
+        {
+            debug?.Invoke("断了,服务器不认了");
+        };
+        public Action<byte[]> OnOperationResponse = (b) =>
+        {
+            debug?.Invoke("数据来了");
         };
 
-        public ConcurrentQueue<byte[]> Incoming1 { get => Incoming; set => Incoming = value; }
+
+        public Action<int> OnConnected = (sid) =>
+        {
+            debug?.Invoke($"{nameof(OnConnected)} {sid}");
+        };
+        
         public int SessionId { get; private set; }
 
         public void SendOperationRequest(byte[] buff)
@@ -78,7 +78,6 @@ namespace KcpClient
             {
                 OnOperationResponse?.Invoke(ibuff);
             }
-
         }
 
         static HashSet<int> IOThreads = new HashSet<int>();
@@ -119,7 +118,7 @@ namespace KcpClient
             IOThreads.Add(IOThread.ManagedThreadId);
             //Thread.SetData()
             IOThread.Start();
-            debug($"start connect");
+            debug?.Invoke($"start connect");
 
         }
 
@@ -137,7 +136,7 @@ namespace KcpClient
             tspb.Write(sendbuff, appdata, 0, appdata.Length);
             udp.SendTo(sendbuff, remote_ipep);
             lastHandshakeTime = DateTime.Now;
-            debug($"begin {nameof(Handshake)}");
+            debug?.Invoke($"begin {nameof(Handshake)}");
         }
 
         DateTime lastHartbeatTime = DateTime.Now;
@@ -158,7 +157,7 @@ namespace KcpClient
         void IOLoop()
         {
             var tid = Thread.CurrentThread.ManagedThreadId;
-            debug($"Thread {tid} start");
+            debug?.Invoke($"Thread {tid} start");
             EndPoint ep = new IPEndPoint(0, 0);
             SpinWait sw = new SpinWait();
             while (IOThreads.Contains(tid))
@@ -179,7 +178,7 @@ namespace KcpClient
                             {
                                 this.SessionId = tmp;
                                 defpb = new ToServerPackBuilder(defpb.GetSysIdBuf(), this.SessionId);
-                                debug($"{nameof(Handshake)}:{nameof(SessionId)}={SessionId}");
+                                debug?.Invoke($"{nameof(Handshake)}:{nameof(SessionId)}={SessionId}");
                                 OnConnected?.Invoke(tmp);
                             }
                             else
@@ -204,7 +203,6 @@ namespace KcpClient
                         //error
                         InternalError(datasize);
                     }
-
                 }
                 while (Outgoing.TryDequeue(out var sbuff))
                 {
@@ -222,26 +220,22 @@ namespace KcpClient
                     Heartbeat();
                 }
             }
-            debug($"Thread {tid} exit");
+            debug?.Invoke($"Thread {tid} exit");
         }
 
         private void InternalError(int datasize)
         {
-            switch (datasize)
+            var cec = (ClientErrorCode)datasize;
+            switch (cec)
             {
-                case ToServerPackBuilder.APP_REFUSED:
-                case ToServerPackBuilder.APP_REFUSED2:
-                    Console.WriteLine("拒绝建立连接");
-                    break;
-                case ToServerPackBuilder.BAD_SYSID:
-                    Console.WriteLine("错误的协议");
-                    break;
-                case ToServerPackBuilder.SERVER_TIMEOUT:
+
+                case ClientErrorCode.SERVER_TIMEOUT:
                     Console.WriteLine("服务器认为你超时了");
                     OnDisconnect();
 
                     break;
                 default:
+                    OnError.Invoke(cec);
                     break;
             }
         }

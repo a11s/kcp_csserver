@@ -18,6 +18,14 @@ namespace Utilities
         //  如果是0表示没有sid,新连接,走握手流程
         //  如果是-1表示断开连接
     }
+    public enum ClientErrorCode
+    {
+        BAD_SYSID = -1,
+        APP_REFUSED = -2,
+        APP_REFUSED2 = -3,
+        SERVER_REFUSED = -10,
+        SERVER_TIMEOUT = -11,
+    }
     /// <summary>
     /// 不可以超过1000字节,否则用其他Builder替换它
     /// </summary>
@@ -25,13 +33,14 @@ namespace Utilities
     {
         public const int MAX_DATA_LEN = 1000;
         public const int HEADER_LEN = 12;
-        /// <summary>
-        /// 错误的SysId,伪造或者端口投递错误
-        /// </summary>
-        public const int BAD_SYSID = -1;
-        public const int APP_REFUSED = -2;
-        public const int APP_REFUSED2 = -3;
-        public const int SERVER_TIMEOUT = -11;
+        ///// <summary>
+        ///// 错误的SysId,伪造或者端口投递错误
+        ///// </summary>
+        //public const int BAD_SYSID = -1;
+        //public const int APP_REFUSED = -2;
+        //public const int APP_REFUSED2 = -3;
+        //public const int SERVER_REFUSED = -10;
+        //public const int SERVER_TIMEOUT = -11;
 
         byte[] SysIdBuf = new byte[4];
         byte[] SessionIdBuf = new byte[4];
@@ -158,7 +167,7 @@ namespace Utilities
                 sysbuff[2] = src[2];
                 sysbuff[3] = src[3];
                 sid = 0;
-                return BAD_SYSID;
+                return (int)ClientErrorCode.BAD_SYSID;
             }
         }
         public int Read(byte[] src, out byte[] data, out int sid, out byte[] sysbuff)
@@ -169,7 +178,7 @@ namespace Utilities
                 sid = BitConverter.ToInt32(src, 4);
                 //这里上层应用保证data足够长
                 int len = BitConverter.ToInt32(src, 8);
-                if (len<0)
+                if (len < 0)
                 {
                     sid = 0;
                     sysbuff = new byte[4];
@@ -193,7 +202,7 @@ namespace Utilities
                 sysbuff[3] = src[3];
                 sid = 0;
                 data = null;
-                return BAD_SYSID;
+                return (int)ClientErrorCode.BAD_SYSID;
             }
         }
     }

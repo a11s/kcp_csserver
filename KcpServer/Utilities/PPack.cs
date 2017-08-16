@@ -83,8 +83,10 @@ namespace Utilities
         {
             if (len > MAX_DATA_LEN)
             {
+                throw new InvalidOperationException($"len is more than {nameof(MAX_DATA_LEN)}:{MAX_DATA_LEN}");
                 return false;
             }
+
             dest[0] = SysIdBuf[0];
             dest[1] = SysIdBuf[1];
             dest[2] = SysIdBuf[2];

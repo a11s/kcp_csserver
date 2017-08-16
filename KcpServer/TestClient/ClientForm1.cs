@@ -22,7 +22,7 @@ namespace TestClient
         }
         #region MyRegion
 
-        k.KcpClient kcpclient;
+        k.UdpClient kcpclient;
         IPEndPoint localipep;
         IPEndPoint remoteipep;
         #endregion
@@ -31,7 +31,7 @@ namespace TestClient
         {
             //if (kcpclient == null)
             {
-                kcpclient = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "testpeer".ToCharArray().Select(a => (byte)a).ToArray());
+                kcpclient = new k.UdpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "testpeer".ToCharArray().Select(a => (byte)a).ToArray());
             }
             var userid = uint.Parse(textBox_sid.Text);
             var arr = textBox_local.Text.Split(":"[0]);

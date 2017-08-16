@@ -25,6 +25,8 @@ namespace KcpClient
         Thread IOThread;
         byte[] applicationData;
         byte[] heartbeatData = new byte[0];
+
+        bool _Connected = false;
         public KcpClient(byte a, byte b, byte c, byte d, int sid, byte[] appData)
         {
             defpb = new ToServerPackBuilder(a, b, c, d, sid);
@@ -64,11 +66,15 @@ namespace KcpClient
         {
             debug?.Invoke($"{nameof(OnConnected)} {sid}");
         };
-        
+
         public int SessionId { get; private set; }
 
         public void SendOperationRequest(byte[] buff)
         {
+            if (!Connected)
+            {
+                throw new InvalidOperationException("not connected");
+            }
             Outgoing.Enqueue(buff);
         }
         public void Service()
@@ -98,6 +104,8 @@ namespace KcpClient
         uint _WSAIOW(uint x, uint y) => (IOC_IN | (x) | (y));
         //uint _WSAIORW(uint x, uint y) => (IOC_INOUT | (x) | (y));
         uint SIO_UDP_CONNRESET => _WSAIOW(IOC_VENDOR, 12);
+
+        public bool Connected { get => _Connected; private set => _Connected = value; }
         #endregion
 
         public void Connect(IPEndPoint ipep)
@@ -137,6 +145,7 @@ namespace KcpClient
             udp.SendTo(sendbuff, remote_ipep);
             lastHandshakeTime = DateTime.Now;
             debug?.Invoke($"begin {nameof(Handshake)}");
+            _Connected = true;
         }
 
         DateTime lastHartbeatTime = DateTime.Now;
@@ -225,12 +234,14 @@ namespace KcpClient
 
         private void InternalError(int datasize)
         {
+            Connected = false;
             var cec = (ClientErrorCode)datasize;
             switch (cec)
             {
 
                 case ClientErrorCode.SERVER_TIMEOUT:
                     Console.WriteLine("服务器认为你超时了");
+
                     OnDisconnect();
 
                     break;

@@ -111,6 +111,7 @@ namespace KcpClient
         public void Connect(IPEndPoint ipep)
         {
             IOThreads.Clear();
+            lastHandshakeTime = DateTime.MinValue;
             Incoming = new ConcurrentQueue<byte[]>();
             Outgoing = new ConcurrentQueue<byte[]>();
             udp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);

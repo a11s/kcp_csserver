@@ -53,6 +53,11 @@ namespace KcpServer
             }
             return Task.FromResult(false);
         }
+
+        internal Task CloseAsync()
+        {
+            return iogroup.ShutdownGracefullyAsync();
+        }
     }
 
     

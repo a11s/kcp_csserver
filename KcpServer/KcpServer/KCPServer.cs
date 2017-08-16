@@ -19,18 +19,20 @@ namespace KcpServer
         };
 
 
-        public Task AsyncStart(ServerConfig sc) {
-            UdpServer server = new UdpServer();
-            
-            TaskFactory tf = new TaskFactory();
-            var cm = ConnectionManager.Create(sc.MaxPlayer)
+        UdpServer server = new UdpServer();
+        ConnectionManager cm;
+        TaskFactory tf = new TaskFactory();
+        public Task AsyncStart(ServerConfig sc)
+        {
+
+            cm = ConnectionManager.Create(sc.MaxPlayer)
                 .SetSysId(sc.SysId)
                 .SetApplicationData(sc.AppId)
                 .BindApplication(sc.App)
                 .SetTimeout(sc.Timeout)
                 .SetFiberPool(sc.Fp)
                 ;
-            
+
             var t = server.InitServerAsync(new UdpServerHandler(cm), sc.Localipep);
             var t2 = t.ContinueWith((a) =>
             {
@@ -57,6 +59,13 @@ namespace KcpServer
 
             }, TaskContinuationOptions.AttachedToParent);
             return t3;
+        }
+
+        public Task CloseAsync(TimeSpan closeTimeout)
+        {
+            var t = tf.StartNew(() => { cm.SyncClose(closeTimeout); });
+            var t2 = t.ContinueWith((a) => server.CloseAsync());
+            return t2;
         }
 
         void UpdatePeersThreadLoop(ConnectionManager cm)

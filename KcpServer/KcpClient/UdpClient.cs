@@ -16,8 +16,8 @@ namespace KcpClient
     /// </summary>
     public class UdpClient
     {
-        ConcurrentQueue<byte[]> Incoming;
-        ConcurrentQueue<byte[]> Outgoing;
+        protected ConcurrentQueue<byte[]> Incoming;
+        protected ConcurrentQueue<byte[]> Outgoing;
         Socket udp;
         IPEndPoint remote_ipep;
         IPEndPoint local_ipep;
@@ -75,8 +75,12 @@ namespace KcpClient
             {
                 throw new InvalidOperationException("not connected");
             }
-            Outgoing.Enqueue(buff);
+            ProcessOutgoingData(buff);
+
         }
+
+
+
         public void Service()
         {
             if (udp == null) return;
@@ -201,7 +205,8 @@ namespace KcpClient
                         }
                         else
                         {
-                            Incoming.Enqueue(data);
+                            ProcessIncomingData(data);
+
                         }
                     }
                     else if (datasize == 0)
@@ -231,6 +236,15 @@ namespace KcpClient
                 }
             }
             debug?.Invoke($"Thread {tid} exit");
+        }
+
+        protected virtual void ProcessIncomingData(byte[] data)
+        {
+            Incoming.Enqueue(data);
+        }
+        protected virtual void ProcessOutgoingData(byte[] buff)
+        {
+            Outgoing.Enqueue(buff);
         }
 
         private void InternalError(int datasize)

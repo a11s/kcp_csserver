@@ -162,12 +162,12 @@
   <ItemGroup>
     <Compile Include="ApplicationBase.cs" />
     <Compile Include="ConnectionManager.cs" />
-    <Compile Include="KCPServer.cs" />
+    <Compile Include="UDPServer.cs" />
     <Compile Include="PeerBase.cs" />
     <Compile Include="PeerContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerConfig.cs" />
-    <Compile Include="UdpServer.cs" />
+    <Compile Include="IOServer.cs" />
     <Compile Include="UdpServerHandler.cs" />
   </ItemGroup>
   <ItemGroup>

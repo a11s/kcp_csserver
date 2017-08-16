@@ -1,64 +1,81 @@
-﻿using DotNetty.Buffers;
-using DotNetty.Transport.Bootstrapping;
-using DotNetty.Transport.Channels;
-using DotNetty.Transport.Channels.Sockets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Utilities;
 
 namespace KcpServer
 {
-    internal class UdpServer
+    public class UDPServer
     {
-        void debug(string s)
+        public Action<string> debug = (s) =>
         {
 #if DEBUG
             Console.WriteLine(s);
 #endif
-        }
-        //if tcp use ServerBootstrap
-        Bootstrap bootstrap;
-        //IChannel channel;
-        IEventLoopGroup iogroup;
-        //if tcp you need workers
-        //IEventLoopGroup workergroup;
-        internal Task<bool> InitServerAsync(ChannelHandlerAdapter handler,IPEndPoint localipep)
+        };
+
+
+        IOServer server = new IOServer();
+        ConnectionManager cm;
+        TaskFactory tf = new TaskFactory();
+        public Task AsyncStart(ServerConfig sc)
         {
-            iogroup = new MultithreadEventLoopGroup();
-            //workergroup = new MultithreadEventLoopGroup();
-            try
+
+            cm = ConnectionManager.Create(sc.MaxPlayer)
+                .SetSysId(sc.SysId)
+                .SetApplicationData(sc.AppId)
+                .BindApplication(sc.App)
+                .SetTimeout(sc.Timeout)
+                .SetFiberPool(sc.Fp)
+                ;
+
+            var t = server.InitServerAsync(new UdpServerHandler(cm), sc.Localipep);
+            var t2 = t.ContinueWith((a) =>
             {
-                if (bootstrap != null)
+                if (a.Result == false)
                 {
-                    throw new InvalidOperationException("重复init");
+                    debug("init error");
                 }
-                bootstrap = new Bootstrap();
-                bootstrap.Group(iogroup)
-                    .Channel<SocketDatagramChannel>()
-                    .Option(ChannelOption.SoBroadcast, true)
-                    .Handler(handler);
-                var _channel = bootstrap.BindAsync(localipep);
-                //channel = _channel.Result;
-                debug("inited");
-                return Task.FromResult(true);
-            }
-            catch (System.Threading.ThreadInterruptedException e)
+                else
+                {
+                    tf.StartNew(() => UpdatePeersThreadLoop(cm), TaskCreationOptions.LongRunning);
+                }
+            }, TaskContinuationOptions.AttachedToParent);
+
+            var t3 = t.ContinueWith((a) =>
             {
-                debug(e.ToString());
-                debug("shutdown");
-                iogroup.ShutdownGracefullyAsync();
-            }
-            return Task.FromResult(false);
+                if (a.Result == false)
+                {
+                    debug("init error");
+                }
+                else
+                {
+                    sc.App.Setup();
+                }
+
+            }, TaskContinuationOptions.AttachedToParent);
+            return t3;
         }
 
-        internal Task CloseAsync()
+        public Task CloseAsync(TimeSpan closeTimeout)
         {
-            return iogroup.ShutdownGracefullyAsync();
+            var t = tf.StartNew(() => { cm.SyncClose(closeTimeout); });
+            var t2 = t.ContinueWith((a) => server.CloseAsync());
+            return t2;
+        }
+
+        void UpdatePeersThreadLoop(ConnectionManager cm)
+        {
+            SpinWait sw = new SpinWait();
+            while (cm.App.ApplicationRunning)
+            {
+                cm.CheckTimeout();
+                sw.SpinOnce();
+            }
         }
     }
-
-    
 }

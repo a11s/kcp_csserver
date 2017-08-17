@@ -7,7 +7,7 @@ using KcpServer;
 
 namespace TestServer
 {
-    class TestPeer : KcpServer.PeerBase
+    class TestPeer : KcpServer.KcpPeerBase
     {
         public TestPeer(PeerContext pc) : base(pc)
         {
@@ -22,8 +22,9 @@ namespace TestServer
             //    Math.Sqrt(k);
             //}
             var i = BitConverter.ToInt64(data, 0);
-            Console.WriteLine($"sid:{this.SessionId}->{i}");
-            this.SendOperationResponse(BitConverter.GetBytes(i + 1));
+            var snd = i + 1;
+            this.SendOperationResponse(BitConverter.GetBytes(snd));
+            Console.WriteLine($"sid:{this.SessionId}->rec:{i} snd:{snd}");
         }
     }
 }

@@ -21,15 +21,15 @@ namespace KcpServer
         public IChannel Channel { get; internal set; }
 
         ConcurrentQueue<byte[]> IncomingData = new ConcurrentQueue<byte[]>();
-        ConcurrentQueue<byte[]> OutgoingData = new ConcurrentQueue<byte[]>();
+        protected ConcurrentQueue<byte[]> OutgoingData = new ConcurrentQueue<byte[]>();
 
-        ToServerPackBuilder defpb;
-        Codec.BaseEncoder defEncoder;
+        protected ToServerPackBuilder defpb;
+        Codec.CodecBase defEncoder;
 
         public virtual void OnDisconnect(DateTime lastPackTime, TimeSpan t)
         {
             //do nothing
-            Console.WriteLine("连接断了");
+            Console.WriteLine("connection timeout");
         }
         internal void OnTimeout(DateTime lastPackTime, TimeSpan t)
         {
@@ -37,12 +37,13 @@ namespace KcpServer
             var sendbuf = defpb.MakeTimeoutReturn((int)ClientErrorCode.SERVER_TIMEOUT, SessionId);
             this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(sendbuf.Length).WriteBytes(sendbuf), Context.RemoteEP));
 
-            this.Context.Encoder.Close();
-            this.Context.Decoder.Close();
-
+            this.Context.Codec.Close();
         }
 
-
+        /// <summary>
+        /// from udp server.
+        /// </summary>
+        /// <param name="recdata"></param>
         internal void AddRecData(byte[] recdata)
         {
             IncomingData.Enqueue(recdata);
@@ -57,12 +58,10 @@ namespace KcpServer
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public int SendOperationResponse(byte[] data)
+        public void SendOperationResponse(byte[] data)
         {
-            var sendbuf = new byte[ToServerPackBuilder.HEADER_LEN + data.Length];
-            defpb.Write(sendbuf, data, 0, data.Length);
-            OutgoingData.Enqueue(sendbuf);
-            return 0;
+            BeforeSendOutgoing(data);
+
         }
 
         public PeerBase(PeerContext pc)
@@ -70,7 +69,8 @@ namespace KcpServer
             this.Context = pc;
             var fp = pc.ConnectionManager.Workfiberpool;
             defpb = new ToServerPackBuilder(pc.ConnectionManager.SysId, pc.SessionId);
-            defEncoder = pc.Encoder;
+            defEncoder = pc.Codec;
+
             this._Fiber = new Fiber(fp, this.GetHashCode());
         }
 
@@ -78,18 +78,35 @@ namespace KcpServer
         {
             while (IncomingData.TryDequeue(out var buf))
             {
-                OnOperationRequest(buf);
+                BeforeOperationRequest(buf);
+
             }
             while (OutgoingData.TryDequeue(out var buf2))
             {
-                ProcessSendOutgoing(buf2);                
+#if PRINTPACK
+                Console.WriteLine($"realsend:{buf2.Length}:{string.Join(",", buf2)}");
+#endif
+                this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(buf2.Length).WriteBytes(buf2), Context.RemoteEP));
             }
+
+            DeriverUpdate();
         }
 
-        private void ProcessSendOutgoing(byte[] data)
+        protected virtual void DeriverUpdate()
         {
-            var sendbuf = defEncoder.Encode(data);
-            this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(sendbuf.Length).WriteBytes(sendbuf), Context.RemoteEP));
+            //do nothing
+        }
+
+        protected virtual void BeforeOperationRequest(byte[] buf)
+        {
+            OnOperationRequest(buf);
+        }
+
+        protected virtual void BeforeSendOutgoing(byte[] data)
+        {
+            var sendbuf = new byte[ToServerPackBuilder.HEADER_LEN + data.Length];
+            defpb.Write(sendbuf, data, 0, data.Length);
+            OutgoingData.Enqueue(sendbuf);
         }
     }
 }

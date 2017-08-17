@@ -166,13 +166,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationBase.cs" />
-    <Compile Include="Codec\BaseDecoder.cs" />
-    <Compile Include="Codec\BaseEncoder.cs" />
-    <Compile Include="Codec\KcpDecoder.cs" />
-    <Compile Include="Codec\KcpEncoder.cs" />
+    <Compile Include="Codec\CodecBase.cs" />
+    <Compile Include="Codec\KcpCodec.cs" />
     <Compile Include="ConnectionManager.cs" />
     <Compile Include="KCPClasses\KcpServer.cs" />
     <Compile Include="KCPClasses\KcpServerHandler.cs" />
+    <Compile Include="KCPClasses\KcpPeerBase.cs" />
     <Compile Include="UdpServer.cs" />
     <Compile Include="PeerBase.cs" />
     <Compile Include="PeerContext.cs" />

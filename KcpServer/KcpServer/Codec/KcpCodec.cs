@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using static kcpwarpper.KCP;
 namespace KcpServer.Codec
 {
-    public unsafe class KcpEncoder : BaseEncoder
+    public unsafe class KcpCodec : CodecBase
     {
         private PeerContext x;
-        public KcpEncoder(PeerContext x)
+        public KcpCodec(PeerContext x)
         {
             this.x = x;
             CreateKcp(x);
@@ -20,23 +21,28 @@ namespace KcpServer.Codec
         {
             if (x.EncoderData == null)
             {
-                x.EncoderData = ikcp_create((uint)x.SessionId, (void*)0);
-                if ((int)x.EncoderData > 0)
+                var errno = ikcp_create((uint)x.SessionId, (void*)0);
+                if ((int)errno != -1)
                 {
+                    x.EncoderData = errno;
+#if PRINTPACK
                     Console.WriteLine($"create kcp {(int)x.EncoderData}");
+#endif
+
+                    ikcp_wndsize(x.EncoderData, 128, 128);
+                    ikcp_nodelay(x.EncoderData, 1, 10, 2, 1);
+                    x.EncoderData->rx_minrto = 10;
+                    x.EncoderData->fastresend = 1;
+                    x.EncoderData->mtu = Utilities.ToServerPackBuilder.MAX_DATA_LEN;//可能还要浪费几个字节
                 }
                 else
                 {
-                    throw new NullReferenceException($"kcp create failed {(int)x.EncoderData}");
+                    x.EncoderData = null;
+                    throw new InvalidCastException($"kcp create failed {(int)errno}");
                 }
             }
         }
 
-        public override byte[] Encode(byte[] data)
-        {
-            Console.WriteLine("kcp encode");
-            return base.Encode(data);
-        }
 
         public override void Close()
         {

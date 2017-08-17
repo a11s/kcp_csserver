@@ -23,7 +23,7 @@ namespace KcpServer
         ApplicationBase app { get => connMan.App; }
 
         ToServerPackBuilder defpb;
-        byte[] recbuff = new byte[ToServerPackBuilder.MAX_DATA_LEN + ToServerPackBuilder.HEADER_LEN];
+        byte[] recdatabuff = new byte[ToServerPackBuilder.MAX_DATA_LEN + ToServerPackBuilder.HEADER_LEN];
         ConnectionManager connMan = null;
         public UdpServerHandler(ConnectionManager man)
         {
@@ -32,7 +32,7 @@ namespace KcpServer
         }
         protected override void ChannelRead0(IChannelHandlerContext ctx, DatagramPacket msg)
         {
-            var len = defpb.Read(msg.Content.Array, recbuff, out var sid, out var sysbuff);
+            var len = defpb.Read(msg.Content.Array, recdatabuff, out var sid, out var sysbuff);
             if (len < 0)
             {
                 //bad sysid.
@@ -45,7 +45,7 @@ namespace KcpServer
                 {
                     //请求握手
                     var appdata = new byte[len];
-                    Array.Copy(recbuff, appdata, len);
+                    Array.Copy(recdatabuff, appdata, len);
                     var x = new PeerContext() { ApplicationData = appdata, RemoteEP = msg.Sender, LocalEP = msg.Recipient, SessionId = 0, ConnectionManager = connMan };
                     if (!connMan.App.PreCreatePeer(x))
                     {
@@ -65,7 +65,7 @@ namespace KcpServer
                     else
                     {
                         x.SessionId = newsid;
-                        PrepCodecs(x);
+                        BuildCodecsBeforePlayerCreated(x);
                         PeerBase p = connMan.App.CreatePeer(x);
                         if (p == null)
                         {
@@ -108,7 +108,7 @@ namespace KcpServer
                         else
                         {
                             var recdata = new byte[len];
-                            Array.Copy(recbuff, recdata, len);
+                            Array.Copy(recdatabuff, 0, recdata, 0, len);
                             ProcessIncomingData(pc, recdata);
                         }
 
@@ -118,16 +118,15 @@ namespace KcpServer
 
         }
 
-        protected virtual void PrepCodecs(PeerContext x)
+        protected virtual void BuildCodecsBeforePlayerCreated(PeerContext x)
         {
-            x.Encoder = new Codec.BaseEncoder();
-            x.Decoder = new Codec.BaseDecoder();
+            x.Codec = new Codec.CodecBase();
         }
 
-        protected virtual void ProcessIncomingData(PeerBase pc, byte[] recdata)
+        protected virtual void ProcessIncomingData(PeerBase peer, byte[] recdata)
         {
-            var realdata = pc.Context.Decoder.Decode(recdata);
-            pc.AddRecData(realdata);
+            //var realdata = peer.Context.Codec.Decode(recdata);
+            peer.AddRecData(recdata);
         }
     }
 }

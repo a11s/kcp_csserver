@@ -21,7 +21,7 @@ namespace KcpServer
         public EndPoint LocalEP { get; set; }
         public int SessionId { get; internal set; }
         public ConnectionManager ConnectionManager { get; internal set; }
-        public BaseEncoder Encoder { get; internal set; }
-        public BaseDecoder Decoder { get; internal set; }
+        public CodecBase Codec { get; internal set; }
+        
     }
 }

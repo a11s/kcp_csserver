@@ -88,6 +88,12 @@ namespace KcpClient
             {
                 OnOperationResponse?.Invoke(ibuff);
             }
+            AfterService();
+        }
+
+        protected virtual void AfterService()
+        {
+            //for derived Class
         }
 
         static HashSet<int> IOThreads = new HashSet<int>();
@@ -193,7 +199,8 @@ namespace KcpClient
                                 this.SessionId = tmp;
                                 defpb = new ToServerPackBuilder(defpb.GetSysIdBuf(), this.SessionId);
                                 debug?.Invoke($"{nameof(Handshake)}:{nameof(SessionId)}={SessionId}");
-                                OnConnected?.Invoke(tmp);
+                                OnHandShake();
+
                             }
                             else
                             {
@@ -224,6 +231,9 @@ namespace KcpClient
                     var sndbuf = new byte[ToServerPackBuilder.HEADER_LEN + sbuff.Length];
                     defpb.Write(sndbuf, sbuff, 0, sbuff.Length);
                     udp.SendTo(sndbuf, remote_ipep);
+#if PRINTPACK
+                    Console.WriteLine($"realsend:{sndbuf.Length}");
+#endif
                 }
                 sw.SpinOnce();
                 if (this.SessionId == 0)
@@ -236,6 +246,12 @@ namespace KcpClient
                 }
             }
             debug?.Invoke($"Thread {tid} exit");
+        }
+
+        protected virtual void OnHandShake()
+        {
+            OnConnected?.Invoke(this.SessionId);
+
         }
 
         protected virtual void ProcessIncomingData(byte[] data)
@@ -255,7 +271,7 @@ namespace KcpClient
             {
 
                 case ClientErrorCode.SERVER_TIMEOUT:
-                    Console.WriteLine("服务器认为你超时了");
+                    Console.WriteLine("server think you are timeout");
 
                     OnDisconnect();
 

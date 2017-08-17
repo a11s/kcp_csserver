@@ -22,7 +22,7 @@ namespace TestClient
         }
         #region MyRegion
 
-        k.KcpClient kcpclient;
+        k.UdpClient kcpclient;
         IPEndPoint localipep;
         IPEndPoint remoteipep;
         #endregion
@@ -41,12 +41,16 @@ namespace TestClient
             kcpclient.OnOperationResponse = (buf) =>
             {
                 var i = BitConverter.ToInt64(buf, 0);
-                Console.WriteLine($"rec{i}");
+
+                Console.Write($"rec:{i}");
+
                 Task.Run(
                     () =>
                     {
                         //System.Threading.Thread.Sleep(1000);//过一秒以后发送返回
-                        kcpclient.SendOperationRequest(BitConverter.GetBytes(i + 1));
+                        var snd = i + 1;
+                        Console.WriteLine($" snd:{snd}");
+                        kcpclient.SendOperationRequest(BitConverter.GetBytes(snd));
                     }
                     );
             };
@@ -90,7 +94,7 @@ namespace TestClient
         {
             //kcpclient.SendOperationRequest(Encoding.UTF8.GetBytes("烫烫烫烫烫"));
 
-            kcpclient.SendOperationRequest(BitConverter.GetBytes(UInt64.MinValue));
+            kcpclient.SendOperationRequest(BitConverter.GetBytes((UInt64)1));
         }
     }
 }

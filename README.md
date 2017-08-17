@@ -2,7 +2,7 @@
 
 用kcp_warpper跟dotnetty的lib做一个简单的kcpserver.  
 ## 目前已经完成:  
-1 dotnetty 的udp服务器  
+1 dotnetty 的udp服务器  
 2 session管理  
 3 集成了kcp用于可靠传输  
 4 客户端lib  

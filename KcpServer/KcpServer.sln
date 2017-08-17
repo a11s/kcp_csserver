@@ -15,6 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestServer", "TestServer\Te
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Utilities\Utilities.projitems*{14a27791-39a5-454d-b4dd-19c0cee73d01}*SharedItemsImports = 4
 		Utilities\Utilities.projitems*{16278a10-a238-41e5-ac2a-d9316489fa32}*SharedItemsImports = 4
 		Utilities\Utilities.projitems*{46ad2778-1c68-459f-8578-8739ada49b2b}*SharedItemsImports = 13
 		Utilities\Utilities.projitems*{a2a74321-0f1a-4fdd-8ea3-21c8f32ad730}*SharedItemsImports = 4

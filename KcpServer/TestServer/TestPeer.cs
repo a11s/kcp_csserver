@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KcpServer;
-
+using static Utilities.MakeTestBuff;
 namespace TestServer
 {
     class TestPeer : KcpServer.KcpPeerBase
     {
         public TestPeer(PeerContext pc) : base(pc)
         {
-            Console.WriteLine($"peer sid:{pc.SessionId} created");
+            Console.WriteLine($"{nameof(TestPeer)} sid:{pc.SessionId} created");
         }
 
         public override void OnOperationRequest(byte[] data)
@@ -25,6 +25,20 @@ namespace TestServer
             var snd = i + 1;
             this.SendOperationResponse(BitConverter.GetBytes(snd));
             Console.WriteLine($"sid:{this.SessionId}->rec:{i} snd:{snd}");
+        }
+    }
+    public class BigBuffPeer : KcpServer.KcpPeerBase
+    {
+        public BigBuffPeer(PeerContext pc) : base(pc)
+        {
+            Console.WriteLine($"{nameof(BigBuffPeer)} sid:{pc.SessionId} created");
+        }
+
+        public override void OnOperationRequest(byte[] data)
+        {
+            Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(data)} size:{data.Length}");
+            //send back to client
+            SendOperationResponse(data);
         }
     }
 }

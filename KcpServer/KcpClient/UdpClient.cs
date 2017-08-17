@@ -20,7 +20,7 @@ namespace KcpClient
         protected ConcurrentQueue<byte[]> Outgoing;
         Socket udp;
         IPEndPoint remote_ipep;
-        IPEndPoint local_ipep;
+        //IPEndPoint local_ipep;
         ToServerPackBuilder defpb;
         Thread IOThread;
         byte[] applicationData;
@@ -54,11 +54,11 @@ namespace KcpClient
         };
         public Action OnDisconnect = () =>
         {
-            debug?.Invoke("断了,服务器不认了");
+            debug?.Invoke($"{nameof(OnDisconnect)},server lost");
         };
         public Action<byte[]> OnOperationResponse = (b) =>
         {
-            debug?.Invoke("数据来了");
+            debug?.Invoke("data arrival");
         };
 
 
@@ -84,7 +84,7 @@ namespace KcpClient
         public void Service()
         {
             if (udp == null) return;
-            while (Incoming.TryDequeue(out var ibuff))
+            while (Incoming != null && Incoming.TryDequeue(out var ibuff))
             {
                 OnOperationResponse?.Invoke(ibuff);
             }
@@ -139,6 +139,15 @@ namespace KcpClient
             IOThread.Start();
             debug?.Invoke($"start connect");
 
+        }
+
+        public virtual void Close()
+        {
+            IOThreads.Clear();
+            Incoming = null;
+            Outgoing = null;
+            defpb = null;
+            udp.Close();
         }
 
         DateTime lastHandshakeTime = DateTime.Now;
@@ -226,7 +235,7 @@ namespace KcpClient
                         InternalError(datasize);
                     }
                 }
-                while (Outgoing.TryDequeue(out var sbuff))
+                while (Outgoing != null && Outgoing.TryDequeue(out var sbuff))
                 {
                     var sndbuf = new byte[ToServerPackBuilder.HEADER_LEN + sbuff.Length];
                     defpb.Write(sndbuf, sbuff, 0, sbuff.Length);
@@ -271,10 +280,9 @@ namespace KcpClient
             {
 
                 case ClientErrorCode.SERVER_TIMEOUT:
-                    Console.WriteLine("server think you are timeout");
-
+                    Console.WriteLine("server think you timeout");
+                    Close();
                     OnDisconnect();
-
                     break;
                 default:
                     OnError.Invoke(cec);

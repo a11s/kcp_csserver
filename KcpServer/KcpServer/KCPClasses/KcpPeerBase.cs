@@ -47,6 +47,7 @@ namespace KcpServer
 #if PRINTPACK
             Console.WriteLine($"ikcp_input:size{buf.Length}:{string.Join(",", buf)}");
 #endif
+            Console.WriteLine($"rec:{buf.Length}");
             fixed (byte* p = &buf[0])
             {
                 ikcp_input(this.Context.EncoderData, p, buf.Length);
@@ -60,7 +61,7 @@ namespace KcpServer
                 ikcp_send(this.Context.EncoderData, b, data.Length);
             }
         }
-        byte[] recbuf = new byte[1400];
+        byte[] recbuf = new byte[Utilities.ToServerPackBuilder.MAX_RECBUFF_LEN];
         protected override void DeriverUpdate()
         {
             fixed (byte* b = &recbuf[0])

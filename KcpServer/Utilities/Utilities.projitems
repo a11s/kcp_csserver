@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Fiber.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FiberPool.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MakeTestBuff.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PPack.cs" />
   </ItemGroup>
 </Project>

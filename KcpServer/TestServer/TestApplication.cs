@@ -15,6 +15,9 @@ namespace TestServer
             if (peertype == "testpeer")
             {
                 return new TestPeer(peerContext);
+            }else if (peertype == "bigbufpeer")
+            {
+                return new BigBuffPeer(peerContext);
             }
             else
             {

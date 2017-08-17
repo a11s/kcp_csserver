@@ -33,6 +33,7 @@ namespace Utilities
     {
         public const int MAX_DATA_LEN = 1000;
         public const int HEADER_LEN = 12;
+        public const int MAX_RECBUFF_LEN = 1024 * 1024 * 2;//2MB
         ///// <summary>
         ///// 错误的SysId,伪造或者端口投递错误
         ///// </summary>

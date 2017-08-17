@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using k = KcpClient;
 using System.Runtime.InteropServices;
-
+using static Utilities.MakeTestBuff;
 namespace TestClient
 {
     public unsafe partial class ClientForm1 : Form
@@ -22,39 +22,39 @@ namespace TestClient
         }
         #region MyRegion
 
-        k.UdpClient kcpclient;
+        k.UdpClient client;
         IPEndPoint localipep;
         IPEndPoint remoteipep;
         #endregion
 
         private void button_init_Click(object sender, EventArgs e)
         {
-            //if (kcpclient == null)
+            if (client != null)
             {
-                kcpclient = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "testpeer".ToCharArray().Select(a => (byte)a).ToArray());
+                client.Close();
             }
+
+            //client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "testpeer".ToCharArray().Select(a => (byte)a).ToArray());
+            client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "bigbufpeer".ToCharArray().Select(a => (byte)a).ToArray());
             var userid = uint.Parse(textBox_sid.Text);
             var arr = textBox_local.Text.Split(":"[0]);
             localipep = new IPEndPoint(IPAddress.Parse(arr[0]), int.Parse(arr[1]));
             arr = textBox_remote.Text.Split(":"[0]);
             remoteipep = new IPEndPoint(IPAddress.Parse(arr[0]), int.Parse(arr[1]));
-            kcpclient.OnOperationResponse = (buf) =>
+            client.OnOperationResponse = (buf) =>
             {
-                var i = BitConverter.ToInt64(buf, 0);
-
-                Console.Write($"rec:{i}");
-
-                Task.Run(
-                    () =>
-                    {
-                        //System.Threading.Thread.Sleep(1000);//过一秒以后发送返回
-                        var snd = i + 1;
-                        Console.WriteLine($" snd:{snd}");
-                        kcpclient.SendOperationRequest(BitConverter.GetBytes(snd));
-                    }
-                    );
+                //var i = BitConverter.ToInt64(buf, 0);
+                //Console.Write($"rec:{i}");
+                //Task.Run(() =>
+                //{
+                //    var snd = i + 1;
+                //    Console.WriteLine($" snd:{snd}");
+                //    client.SendOperationRequest(BitConverter.GetBytes(snd));
+                //}
+                //    );
+                Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(buf)} size:{buf.Length}");
             };
-            kcpclient.OnConnected = (sid) =>
+            client.OnConnected = (sid) =>
             {
                 this.Invoke(
                     new Action(() =>
@@ -65,7 +65,7 @@ namespace TestClient
 
             };
 
-            kcpclient.Connect(remoteipep);
+            client.Connect(remoteipep);
         }
 
 
@@ -75,7 +75,7 @@ namespace TestClient
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            kcpclient?.Service();
+            client?.Service();
         }
 
         #region Update vars
@@ -90,11 +90,18 @@ namespace TestClient
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button1_Click(object sender, EventArgs e)
+        private void button_Init_Click(object sender, EventArgs e)
         {
-            //kcpclient.SendOperationRequest(Encoding.UTF8.GetBytes("烫烫烫烫烫"));
+            //client.SendOperationRequest(BitConverter.GetBytes((UInt64)1));
+            
+            client.SendOperationRequest(Utilities.MakeTestBuff.MakeBigBuff());
+        }
 
-            kcpclient.SendOperationRequest(BitConverter.GetBytes((UInt64)1));
+        
+
+        private void button_close_Click(object sender, EventArgs e)
+        {
+            client.Close();
         }
     }
 }

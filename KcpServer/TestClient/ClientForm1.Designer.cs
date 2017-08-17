@@ -39,6 +39,7 @@
             this.textBox_sid = new System.Windows.Forms.TextBox();
             this.button_init = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.button_close = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBox_msg
@@ -57,7 +58,7 @@
             this.button1.TabIndex = 18;
             this.button1.Text = "Send";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.button_Init_Click);
             // 
             // label3
             // 
@@ -126,11 +127,22 @@
             this.timer1.Interval = 10;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // button_close
+            // 
+            this.button_close.Location = new System.Drawing.Point(269, 51);
+            this.button_close.Name = "button_close";
+            this.button_close.Size = new System.Drawing.Size(75, 23);
+            this.button_close.TabIndex = 20;
+            this.button_close.Text = "Close";
+            this.button_close.UseVisualStyleBackColor = true;
+            this.button_close.Click += new System.EventHandler(this.button_close_Click);
+            // 
             // ClientForm1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(566, 245);
+            this.Controls.Add(this.button_close);
             this.Controls.Add(this.textBox_msg);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label3);
@@ -159,6 +171,7 @@
         private System.Windows.Forms.TextBox textBox_sid;
         private System.Windows.Forms.Button button_init;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Button button_close;
     }
 }
 

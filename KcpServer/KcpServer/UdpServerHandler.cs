@@ -14,13 +14,13 @@ namespace KcpServer
     {
 
 
-        protected void debug(string s)
+        protected void DebugLog(string s)
         {
 #if DEBUG
             Console.WriteLine(s);
 #endif
         }
-        ApplicationBase app { get => connMan.App; }
+        ApplicationBase App { get => connMan.App; }
 
         ToServerPackBuilder defpb;
         byte[] recdatabuff = new byte[ToServerPackBuilder.MAX_DATA_LEN + ToServerPackBuilder.HEADER_LEN];
@@ -36,7 +36,7 @@ namespace KcpServer
             if (len < 0)
             {
                 //bad sysid.
-                debug("bad sysid:" + string.Join("", sysbuff));
+                DebugLog("bad sysid:" + string.Join("", sysbuff));
             }
             else if (len >= 0)
             {
@@ -49,7 +49,7 @@ namespace KcpServer
                     var x = new PeerContext() { ApplicationData = appdata, RemoteEP = msg.Sender, LocalEP = msg.Recipient, SessionId = 0, ConnectionManager = connMan };
                     if (!connMan.App.PreCreatePeer(x))
                     {
-                        debug("app refuse connect request");
+                        DebugLog("app refuse connect request");
                         byte[] hsbuff = defpb.MakeHandshakeReturn((int)ClientErrorCode.APP_REFUSED);
                         ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer(hsbuff.Length).WriteBytes(hsbuff), msg.Sender));
                         return;
@@ -57,7 +57,7 @@ namespace KcpServer
                     var newsid = connMan.EnumANewPeerId();
                     if (newsid == ConnectionManager.MAX_CONN_EXCEED)
                     {
-                        debug("server refuse connect request");
+                        DebugLog("server refuse connect request");
                         byte[] hsbuff = defpb.MakeHandshakeReturn((int)ClientErrorCode.SERVER_REFUSED);
                         ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer(hsbuff.Length).WriteBytes(hsbuff), msg.Sender));
                         return;
@@ -70,7 +70,7 @@ namespace KcpServer
                         if (p == null)
                         {
                             connMan.RecycleSession(newsid);
-                            debug("app refuse create player");
+                            DebugLog("app refuse create player");
                             byte[] hsbuff = defpb.MakeHandshakeReturn((int)ClientErrorCode.APP_REFUSED2);
                             ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer(hsbuff.Length).WriteBytes(hsbuff), msg.Sender));
                             return;
@@ -84,7 +84,7 @@ namespace KcpServer
                             byte[] hsbuff = defpb.MakeHandshakeReturn(newsid);
                             ctx.Channel.WriteAndFlushAsync(new DatagramPacket(Unpooled.Buffer(hsbuff.Length).WriteBytes(hsbuff), msg.Sender));
                             connMan.AddConn(p);
-                            debug($"{nameof(ConnectionManager)}:new session established {newsid}");
+                            DebugLog($"{nameof(ConnectionManager)}:new session established {newsid}");
 
                         }
                     }
@@ -96,7 +96,7 @@ namespace KcpServer
                     var pc = connMan.FindPeer(sid);
                     if (pc == null)
                     {
-                        debug($"cant find peer:{sid}");
+                        DebugLog($"cant find peer:{sid}");
                     }
                     else
                     {

@@ -10,12 +10,12 @@ namespace KcpServer
     {
         public KcpServerHandler(ConnectionManager man) : base(man)
         {            
-            debug($"ctor {nameof(KcpServerHandler)}");
+            DebugLog($"ctor {nameof(KcpServerHandler)}");
         }
 
         protected override void BuildCodecsBeforePlayerCreated(PeerContext x)
         {
-            debug($"kcp {nameof(BuildCodecsBeforePlayerCreated)}");
+            DebugLog($"kcp {nameof(BuildCodecsBeforePlayerCreated)}");
             x.Codec = new Codec.KcpCodec(x);            
         }
     }

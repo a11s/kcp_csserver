@@ -13,19 +13,19 @@ namespace KcpServer
 {
     internal class IOServer
     {
-        void debug(string s)
-        {
+        public Action<string> DebugLog = (string s) =>
+          {
 #if DEBUG
-            Console.WriteLine(s);
+              Console.WriteLine(s);
 #endif
-        }
+          };
         //if tcp use ServerBootstrap
         Bootstrap bootstrap;
         //IChannel channel;
         IEventLoopGroup iogroup;
         //if tcp you need workers
         //IEventLoopGroup workergroup;
-        internal Task<bool> InitServerAsync(ChannelHandlerAdapter handler,IPEndPoint localipep)
+        internal Task<bool> InitServerAsync(ChannelHandlerAdapter handler, IPEndPoint localipep)
         {
             iogroup = new MultithreadEventLoopGroup();
             //workergroup = new MultithreadEventLoopGroup();
@@ -42,13 +42,13 @@ namespace KcpServer
                     .Handler(handler);
                 var _channel = bootstrap.BindAsync(localipep);
                 //channel = _channel.Result;
-                debug("inited");
+                DebugLog("inited");
                 return Task.FromResult(true);
             }
             catch (System.Threading.ThreadInterruptedException e)
             {
-                debug(e.ToString());
-                debug("shutdown");
+                DebugLog(e.ToString());
+                DebugLog("shutdown");
                 iogroup.ShutdownGracefullyAsync();
             }
             return Task.FromResult(false);
@@ -60,5 +60,5 @@ namespace KcpServer
         }
     }
 
-    
+
 }

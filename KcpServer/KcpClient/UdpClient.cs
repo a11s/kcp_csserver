@@ -22,11 +22,11 @@ namespace KcpClient
         IPEndPoint remote_ipep;
         //IPEndPoint local_ipep;
         ToServerPackBuilder defpb;
-        Thread IOThread;
+        Thread ioThread;
         byte[] applicationData;
         byte[] heartbeatData = new byte[0];
 
-        bool _Connected = false;
+        bool _connected = false;
         public UdpClient(byte a, byte b, byte c, byte d, int sid, byte[] appData)
         {
             defpb = new ToServerPackBuilder(a, b, c, d, sid);
@@ -115,7 +115,7 @@ namespace KcpClient
         //uint _WSAIORW(uint x, uint y) => (IOC_INOUT | (x) | (y));
         uint SIO_UDP_CONNRESET => _WSAIOW(IOC_VENDOR, 12);
 
-        public bool Connected { get => _Connected; private set => _Connected = value; }
+        public bool Connected { get => _connected; private set => _connected = value; }
         #endregion
 
         public void Connect(IPEndPoint ipep)
@@ -131,12 +131,12 @@ namespace KcpClient
             defpb = new ToServerPackBuilder(defpb.GetSysIdBuf(), SessionId);
             remote_ipep = ipep;
             udp.Connect(remote_ipep);
-            IOThread = new Thread(IOLoop);
-            IOThread.IsBackground = true;
-            IOThread.Name = $"{nameof(IOThread)}";
-            IOThreads.Add(IOThread.ManagedThreadId);
+            ioThread = new Thread(ioLoop);
+            ioThread.IsBackground = true;
+            ioThread.Name = $"{nameof(ioThread)}";
+            IOThreads.Add(ioThread.ManagedThreadId);
             //Thread.SetData()
-            IOThread.Start();
+            ioThread.Start();
             debug?.Invoke($"start connect");
 
         }
@@ -165,7 +165,7 @@ namespace KcpClient
             udp.SendTo(sendbuff, remote_ipep);
             lastHandshakeTime = DateTime.Now;
             debug?.Invoke($"begin {nameof(Handshake)}");
-            _Connected = true;
+            _connected = true;
         }
 
         DateTime lastHartbeatTime = DateTime.Now;
@@ -183,7 +183,7 @@ namespace KcpClient
             lastHartbeatTime = DateTime.Now;
         }
 
-        void IOLoop()
+        void ioLoop()
         {
             var tid = Thread.CurrentThread.ManagedThreadId;
             debug?.Invoke($"Thread {tid} start");

@@ -11,7 +11,7 @@ namespace KcpServer
 {
     public class UdpServer
     {
-        public Action<string> debug = (s) =>
+        public Action<string> DebugLog = (s) =>
         {
 #if DEBUG
             Console.WriteLine(s);
@@ -37,7 +37,7 @@ namespace KcpServer
             {
                 if (a.Result == false)
                 {
-                    debug("init error");
+                    DebugLog("init error");
                 }
                 else
                 {
@@ -49,7 +49,7 @@ namespace KcpServer
             {
                 if (a.Result == false)
                 {
-                    debug("init error");
+                    DebugLog("init error");
                 }
                 else
                 {

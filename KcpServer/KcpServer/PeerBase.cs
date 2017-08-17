@@ -11,16 +11,16 @@ namespace KcpServer
 {
     public abstract class PeerBase
     {
-        Fiber _Fiber = null;
+        Fiber _fiber = null;
         private DateTime lastPackTime;
         public DateTime LastPackTime { get => lastPackTime; set => lastPackTime = value; }
 
         public int SessionId { get => this.Context.SessionId; }
         public PeerContext Context { get; internal set; }
-        public Fiber Fiber { get => _Fiber; /*set => _Fiber = value;*/ }
+        public Fiber Fiber { get => _fiber; /*set => _Fiber = value;*/ }
         public IChannel Channel { get; internal set; }
 
-        ConcurrentQueue<byte[]> IncomingData = new ConcurrentQueue<byte[]>();
+        protected ConcurrentQueue<byte[]> IncomingData = new ConcurrentQueue<byte[]>();
         protected ConcurrentQueue<byte[]> OutgoingData = new ConcurrentQueue<byte[]>();
 
         protected ToServerPackBuilder defpb;
@@ -71,7 +71,7 @@ namespace KcpServer
             defpb = new ToServerPackBuilder(pc.ConnectionManager.SysId, pc.SessionId);
             defEncoder = pc.Codec;
 
-            this._Fiber = new Fiber(fp, this.GetHashCode());
+            this._fiber = new Fiber(fp, this.GetHashCode());
         }
 
         internal void UpdateInternal()

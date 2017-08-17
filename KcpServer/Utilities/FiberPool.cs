@@ -21,12 +21,12 @@ namespace Utilities
         /// 不再接受更多任务
         /// </summary>
         bool Closing = false;
-        void debug(string s)
-        {
+        public Action<string> DebugLog = (string s) =>
+          {
 #if DEBUG
-            Console.WriteLine(s);
+              Console.WriteLine(s);
 #endif
-        }
+          };
 
         public FiberPool(int cnt)
         {
@@ -43,7 +43,7 @@ namespace Utilities
                 t.Start(i);
                 threadCloseState[i] = false;
             }
-            debug($"{nameof(FiberPool)} started");
+            DebugLog($"{nameof(FiberPool)} started");
         }
 
 
@@ -67,7 +67,7 @@ namespace Utilities
                 if (Closing)
                 {
                     threadCloseState[i] = true;
-                    debug($"{nameof(FiberPool)} thread {i} exit");
+                    DebugLog($"{nameof(FiberPool)} thread {i} exit");
                     break;
                 }
                 sw.SpinOnce();
@@ -76,7 +76,7 @@ namespace Utilities
         public void SyncClose(TimeSpan timeout)
         {
             Closing = true;
-            debug($"{nameof(FiberPool)} Closing");
+            DebugLog($"{nameof(FiberPool)} Closing");
             SpinWait sw = new SpinWait();
             DateTime starttime = DateTime.Now;
             while (true)
@@ -85,14 +85,14 @@ namespace Utilities
                 if (closed == threadCloseState.Length)
                 {
                     //all closed
-                    debug($"{nameof(FiberPool)} All thread closed");
+                    DebugLog($"{nameof(FiberPool)} All thread closed");
                     Running = false;
                     break;
                 }
                 if (DateTime.Now.Subtract(starttime) > timeout)
                 {
                     Running = false;
-                    debug($"{nameof(FiberPool)} Close time out");
+                    DebugLog($"{nameof(FiberPool)} Close time out");
                     break;
                 }
                 else

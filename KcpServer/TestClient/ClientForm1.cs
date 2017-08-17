@@ -94,7 +94,7 @@ namespace TestClient
         {
             //client.SendOperationRequest(BitConverter.GetBytes((UInt64)1));
             
-            client.SendOperationRequest(Utilities.MakeTestBuff.MakeBigBuff());
+            client.SendOperationRequest(MakeBigBuff());
         }
 
         

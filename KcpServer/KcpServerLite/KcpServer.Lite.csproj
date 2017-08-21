@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="kcpwarpper, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\kcpwarpper.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,14 +48,30 @@
   <ItemGroup>
     <Compile Include="ApplicationBase.cs" />
     <Compile Include="Codec\CodecBase.cs" />
+    <Compile Include="Codec\KcpCodec.cs" />
     <Compile Include="ConnectionManager.cs" />
-    <Compile Include="KcpServerLite.cs" />
+    <Compile Include="KCPClasses\KcpPeerBase.cs" />
+    <Compile Include="KCPClasses\KcpServerLite.cs" />
     <Compile Include="PeerBase.cs" />
     <Compile Include="PeerContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendChannel.cs" />
     <Compile Include="ServerConfig.cs" />
     <Compile Include="UdpServerLite.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="kcplib.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="kcplib.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="kcpwarpper.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="kcpwarpper.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="..\Utilities\Utilities.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

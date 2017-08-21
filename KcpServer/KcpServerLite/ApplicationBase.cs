@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,12 +10,15 @@ namespace KcpServer.Lite
     public abstract class ApplicationBase
     {
         ConnectionManager ConnMan;
+        private EndPoint _localEndPoint;
+
         internal void SetConnMan(ConnectionManager cm)
         {
             ConnMan = cm;
         }
 
         public bool ApplicationRunning { get; internal set; } = true;
+        public EndPoint LocalEndPoint { get => _localEndPoint; /*set => localEndPoint = value;*/ }
 
         public virtual bool PreCreatePeer(PeerContext peerContext)
         {
@@ -37,6 +41,11 @@ namespace KcpServer.Lite
                 TearDown();
                 ApplicationRunning = false;
             }
+        }
+
+        internal void SetLocalEndPoint(EndPoint localEndPoint)
+        {
+            this._localEndPoint = localEndPoint;
         }
     }
 }

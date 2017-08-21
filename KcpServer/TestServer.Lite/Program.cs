@@ -29,7 +29,7 @@ namespace TestServer.Lite
 
         public static void StartServer(IPEndPoint ipep)
         {
-            Server = new KcpServer.Lite.UdpServerLite();
+            Server = new KcpServer.Lite.KcpServerLite();
             App = new TestApplicationLite();
             var sysid = "Test".ToCharArray().Select(a => (byte)a).ToArray();
             var appid = "App1".ToCharArray().Select(a => (byte)a).ToArray();

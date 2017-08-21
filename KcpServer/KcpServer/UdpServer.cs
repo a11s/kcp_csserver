@@ -21,6 +21,7 @@ namespace KcpServer
         IOServer server = new IOServer();
         ConnectionManager cm;
         TaskFactory tf = new TaskFactory();
+        public EndPoint LocalEndPoint { get => server.LocalEndPoint; }
         public Task AsyncStart(ServerConfig sc)
         {
 
@@ -53,6 +54,7 @@ namespace KcpServer
                 }
                 else
                 {
+                    sc.App.SetLocalEndPoint(server.LocalEndPoint);
                     sc.App.Setup();
                 }
 

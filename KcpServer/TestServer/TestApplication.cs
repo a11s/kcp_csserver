@@ -28,7 +28,7 @@ namespace TestServer
 
         public override void Setup()
         {
-            Console.WriteLine($"{nameof(TestApplication)} {nameof(Setup)}");
+            Console.WriteLine($"{nameof(TestApplication)} {nameof(Setup)} {LocalEndPoint}");
         }
 
         public override void TearDown()

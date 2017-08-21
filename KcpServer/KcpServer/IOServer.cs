@@ -23,6 +23,10 @@ namespace KcpServer
         Bootstrap bootstrap;
         //IChannel channel;
         IEventLoopGroup iogroup;
+
+        public IChannel Channel { get; private set; }
+
+        public EndPoint LocalEndPoint { get => Channel?.LocalAddress; }
         //if tcp you need workers
         //IEventLoopGroup workergroup;
         internal Task<bool> InitServerAsync(ChannelHandlerAdapter handler, IPEndPoint localipep)
@@ -42,7 +46,20 @@ namespace KcpServer
                     .Handler(handler);
                 var _channel = bootstrap.BindAsync(localipep);
                 //channel = _channel.Result;
-                DebugLog("inited");
+                _channel.ContinueWith((c) =>
+                {
+                    var ch = c.Result;
+                    this.Channel = ch;
+                    if (ch.LocalAddress is IPEndPoint ipep)
+                    {
+                        IPAddress[] ipaddrs = Dns.GetHostAddresses(Environment.MachineName);
+                        foreach (var ipaddr in ipaddrs)
+                        {
+                            DebugLog(ipaddr.ToString());
+                        }
+                    }
+                    DebugLog($"inited {ch.LocalAddress}");
+                });
                 return Task.FromResult(true);
             }
             catch (System.Threading.ThreadInterruptedException e)

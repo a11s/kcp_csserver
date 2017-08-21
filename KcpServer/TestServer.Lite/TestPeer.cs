@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using static Utilities.MakeTestBuff;
 
 namespace KcpServer.Lite
 {
@@ -30,6 +30,22 @@ namespace KcpServer.Lite
         {
             base.OnDisconnect(lastPackTime, t);
             Console.WriteLine($"{nameof(TestPeer)} {nameof(OnDisconnect)}");
+        }
+    }
+
+
+    public class TestKcpPeer : KcpServer.Lite.KcpPeerBase
+    {
+        public TestKcpPeer(PeerContext pc) : base(pc)
+        {
+            Console.WriteLine($"{nameof(TestKcpPeer)} sid:{pc.SessionId} created");
+        }
+
+        public override void OnOperationRequest(byte[] data)
+        {
+            Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(data)} size:{data.Length}");
+            //send back to client
+            SendOperationResponse(data);
         }
     }
 }

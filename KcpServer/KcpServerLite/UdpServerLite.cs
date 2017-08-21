@@ -42,6 +42,7 @@ namespace KcpServer.Lite
             defpb = new ToServerPackBuilder(cm._SysId, 0);
             connMan = cm;
             initSocket(sc);
+            sc.App.SetLocalEndPoint(udp.LocalEndPoint);
             sc.App.Setup();
         }
         public void Close(TimeSpan ts)
@@ -68,7 +69,7 @@ namespace KcpServer.Lite
 
         #endregion
         Socket udp;
-        void initSocket(ServerConfig sc)
+        Socket initSocket(ServerConfig sc)
         {
             if (udp != null) { throw new InvalidOperationException("init twice"); }
             udp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -78,6 +79,7 @@ namespace KcpServer.Lite
             udp.Blocking = false;
             udp.Bind(sc.Localipep);
             DebugLog($"udp socket inited {udp.LocalEndPoint}");
+            return udp;
         }
 
         void closeSocket(TimeSpan ts)
@@ -213,7 +215,7 @@ namespace KcpServer.Lite
             peer.AddRecData(recdata);
         }
 
-        private void BuildCodecsBeforePlayerCreated(PeerContext x)
+        protected virtual void BuildCodecsBeforePlayerCreated(PeerContext x)
         {
             x.Codec = new Codec.CodecBase();
         }

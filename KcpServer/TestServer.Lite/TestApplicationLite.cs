@@ -11,12 +11,13 @@ namespace TestServer.Lite
     {
         public override PeerBase CreatePeer(PeerContext peerContext)
         {
-            return new TestPeer(peerContext);
+            //return new TestPeer(peerContext);
+            return new TestKcpPeer(peerContext);
         }
 
         public override void Setup()
         {
-            Console.WriteLine($"{nameof(TestApplicationLite)} {nameof(Setup)}");
+            Console.WriteLine($"{nameof(TestApplicationLite)} {nameof(Setup)} {LocalEndPoint}");
         }
 
         public override void TearDown()

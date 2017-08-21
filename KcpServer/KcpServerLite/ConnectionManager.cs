@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities;
 
-namespace KcpServer
+namespace KcpServer.Lite
 {
     public class ConnectionManager
-    {        
+    {
         public const int MAX_CONN_EXCEED = -1;
-        private ConcurrentDictionary<int, PeerBase> ConnDict = new ConcurrentDictionary<int, PeerBase>();
+        private Dictionary<int, PeerBase> ConnDict = new Dictionary<int, PeerBase>();
         public byte[] _SysId = new byte[4];
         public byte[] _ApplicationData = new byte[0];
         ApplicationBase _app;
@@ -25,15 +24,13 @@ namespace KcpServer
         internal void SyncClose(TimeSpan timeSpan)
         {
             App?.Close();
-            _workfiberpool?.SyncClose(timeSpan);
-            _workfiberpool = null;
         }
 
-        public FiberPool Workfiberpool { get => _workfiberpool; /*set => _workfiberpool = value;*/ }
+
 
         LinkedList<int> PeerIdPool = null;
         public Action<string> log = (s) => { Console.WriteLine(s); };
-        private FiberPool _workfiberpool = null;
+
 
         public ConnectionManager BindApplication(ApplicationBase app)
         {
@@ -48,11 +45,7 @@ namespace KcpServer
             return this;
         }
 
-        public ConnectionManager SetFiberPool(FiberPool fp)
-        {
-            this._workfiberpool = fp;
-            return this;
-        }
+
 
         /// <summary>
         /// 设置 SysId
@@ -80,6 +73,7 @@ namespace KcpServer
                     try
                     {
                         item.Value.OnTimeout(item.Value.LastPackTime, t);
+                        //Console.WriteLine($"peer {item.Value.Context.SessionId} timeout@{item.Value.LastPackTime}" );
 
                     }
                     catch (Exception ex)
@@ -95,23 +89,15 @@ namespace KcpServer
                 }
                 else
                 {
-                    var stat = item.Value.Fiber.State;
-                    if (stat == WorkingState.Working || stat == WorkingState.Free)
-                    {
-                        item.Value.Fiber.Enqueue(() =>
-                        {
-
-                            //让Peer处理消息
-                            item.Value.UpdateInternal();
-                        });
-                    }
+                    //让Peer处理消息
+                    item.Value.UpdateInternal();
                 }
             }
             if (removelist != null)
             {
                 foreach (var item in removelist)
                 {
-                    ConnDict.TryRemove(item, out var _);
+                    ConnDict.Remove(item);
                 }
                 removelist.Clear();
                 removelist = null;
@@ -175,7 +161,7 @@ namespace KcpServer
             return this;
         }
 
-        public static ConnectionManager Create(int MaxConnection )
+        public static ConnectionManager Create(int MaxConnection)
         {
 
             var cm = new ConnectionManager();
@@ -189,5 +175,4 @@ namespace KcpServer
 
 
     }
-
 }

@@ -40,6 +40,7 @@
             this.button_init = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.button_close = new System.Windows.Forms.Button();
+            this.cb_isUdp = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // textBox_msg
@@ -137,11 +138,24 @@
             this.button_close.UseVisualStyleBackColor = true;
             this.button_close.Click += new System.EventHandler(this.button_close_Click);
             // 
+            // cb_isUdp
+            // 
+            this.cb_isUdp.AutoSize = true;
+            this.cb_isUdp.Checked = true;
+            this.cb_isUdp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cb_isUdp.Location = new System.Drawing.Point(14, 24);
+            this.cb_isUdp.Name = "cb_isUdp";
+            this.cb_isUdp.Size = new System.Drawing.Size(72, 16);
+            this.cb_isUdp.TabIndex = 21;
+            this.cb_isUdp.Text = "Test UDP";
+            this.cb_isUdp.UseVisualStyleBackColor = true;
+            // 
             // ClientForm1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(566, 245);
+            this.Controls.Add(this.cb_isUdp);
             this.Controls.Add(this.button_close);
             this.Controls.Add(this.textBox_msg);
             this.Controls.Add(this.button1);
@@ -172,6 +186,7 @@
         private System.Windows.Forms.Button button_init;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button button_close;
+        private System.Windows.Forms.CheckBox cb_isUdp;
     }
 }
 

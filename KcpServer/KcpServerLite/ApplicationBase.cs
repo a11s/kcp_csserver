@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Utilities;
 
-namespace KcpServer
+namespace KcpServer.Lite
 {
     public abstract class ApplicationBase
     {
         ConnectionManager ConnMan;
-
         internal void SetConnMan(ConnectionManager cm)
         {
             ConnMan = cm;
@@ -43,6 +39,4 @@ namespace KcpServer
             }
         }
     }
-
-
 }

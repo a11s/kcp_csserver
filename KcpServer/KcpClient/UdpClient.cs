@@ -115,8 +115,8 @@ namespace KcpClient
         //uint _WSAIORW(uint x, uint y) => (IOC_INOUT | (x) | (y));
         uint SIO_UDP_CONNRESET => _WSAIOW(IOC_VENDOR, 12);
 
-        public bool Connected { get => _connected; private set => _connected = value; }
         #endregion
+        public bool Connected { get => _connected; private set => _connected = value; }
 
         public void Connect(IPEndPoint ipep)
         {

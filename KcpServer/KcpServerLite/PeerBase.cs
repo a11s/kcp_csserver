@@ -1,27 +1,25 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DotNetty.Transport.Channels;
 using Utilities;
 
-namespace KcpServer
+namespace KcpServer.Lite
 {
     public abstract class PeerBase
     {
-        ThreadPoolFiber _fiber = null;
+        Fiber _fiber = null;
         private DateTime lastPackTime;
         public DateTime LastPackTime { get => lastPackTime; set => lastPackTime = value; }
 
         public int SessionId { get => this.Context.SessionId; }
         public PeerContext Context { get; internal set; }
-        public ThreadPoolFiber Fiber { get => _fiber; /*set => _Fiber = value;*/ }
-        public IChannel Channel { get; internal set; }
+        public Fiber Fiber { get => _fiber; /*set => _Fiber = value;*/ }
+        public SendChannel Channel { get; internal set; }
 
-        protected ConcurrentQueue<byte[]> IncomingData = new ConcurrentQueue<byte[]>();
-        protected ConcurrentQueue<byte[]> OutgoingData = new ConcurrentQueue<byte[]>();
+        protected Queue<byte[]> IncomingData = new Queue<byte[]>();
+        protected Queue<byte[]> OutgoingData = new Queue<byte[]>();
 
         protected ToServerPackBuilder defpb;
         Codec.CodecBase defEncoder;
@@ -29,13 +27,16 @@ namespace KcpServer
         public virtual void OnDisconnect(DateTime lastPackTime, TimeSpan t)
         {
             //do nothing
+#if DEBUG
             Console.WriteLine("connection timeout");
+#endif
         }
         internal void OnTimeout(DateTime lastPackTime, TimeSpan t)
         {
             this.OnDisconnect(lastPackTime, t);
             var sendbuf = defpb.MakeTimeoutReturn((int)ClientErrorCode.SERVER_TIMEOUT, SessionId);
-            this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(sendbuf.Length).WriteBytes(sendbuf), Context.RemoteEP));
+            //this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(sendbuf.Length).WriteBytes(sendbuf), Context.RemoteEP));
+            this.Channel.Send(sendbuf, Context.RemoteEP);
 
             this.Context.Codec.Close();
         }
@@ -67,26 +68,39 @@ namespace KcpServer
         public PeerBase(PeerContext pc)
         {
             this.Context = pc;
-            var fp = pc.ConnectionManager.Workfiberpool;
+            //var fp = pc.ConnectionManager.Workfiberpool;
             defpb = new ToServerPackBuilder(pc.ConnectionManager.SysId, pc.SessionId);
             defEncoder = pc.Codec;
 
-            this._fiber = new ThreadPoolFiber(fp, this.GetHashCode());
+            //this._fiber = new ThreadPoolFiber(fp, this.GetHashCode());
+            _fiber = new Fiber();
         }
 
         internal void UpdateInternal()
         {
-            while (IncomingData.TryDequeue(out var buf))
+            while (IncomingData.Count > 0)
             {
+                var buf = IncomingData.Dequeue();
                 BeforeOperationRequest(buf);
 
             }
-            while (OutgoingData.TryDequeue(out var buf2))
+
+            #region 这里跟UdpServer不一样
+            while (Fiber.works.Count > 0)
             {
+                var a = Fiber.works.Dequeue();
+                a.Invoke();
+            }
+            #endregion
+
+            while (OutgoingData.Count > 0)
+            {
+                var buf2 = OutgoingData.Dequeue();
 #if PRINTPACK
                 Console.WriteLine($"realsend:{buf2.Length}:{string.Join(",", buf2)}");
 #endif
-                this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(buf2.Length).WriteBytes(buf2), Context.RemoteEP));
+                //this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(buf2.Length).WriteBytes(buf2), Context.RemoteEP));
+                this.Channel.Send(buf2, Context.RemoteEP);
             }
 
             DeriverUpdate();

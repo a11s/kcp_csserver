@@ -60,7 +60,7 @@ namespace KcpServer
             return t3;
         }
 
-        public Task CloseAsync(TimeSpan closeTimeout)
+        public Task AsyncClose(TimeSpan closeTimeout)
         {
             var t = tf.StartNew(() => { cm.SyncClose(closeTimeout); });
             var t2 = t.ContinueWith((a) => server.CloseAsync());

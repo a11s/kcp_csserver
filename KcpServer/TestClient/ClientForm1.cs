@@ -33,9 +33,15 @@ namespace TestClient
             {
                 client.Close();
             }
-
-            //client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "testpeer".ToCharArray().Select(a => (byte)a).ToArray());
-            client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "bigbufpeer".ToCharArray().Select(a => (byte)a).ToArray());
+            if (cb_isUdp.Checked)
+            {
+                client = new k.UdpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "testpeer".ToCharArray().Select(a => (byte)a).ToArray());
+            }
+            else
+            {
+                //client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "testpeer".ToCharArray().Select(a => (byte)a).ToArray());
+                client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "bigbufpeer".ToCharArray().Select(a => (byte)a).ToArray());
+            }
             var userid = uint.Parse(textBox_sid.Text);
             var arr = textBox_local.Text.Split(":"[0]);
             localipep = new IPEndPoint(IPAddress.Parse(arr[0]), int.Parse(arr[1]));
@@ -43,16 +49,23 @@ namespace TestClient
             remoteipep = new IPEndPoint(IPAddress.Parse(arr[0]), int.Parse(arr[1]));
             client.OnOperationResponse = (buf) =>
             {
-                //var i = BitConverter.ToInt64(buf, 0);
-                //Console.Write($"rec:{i}");
-                //Task.Run(() =>
-                //{
-                //    var snd = i + 1;
-                //    Console.WriteLine($" snd:{snd}");
-                //    client.SendOperationRequest(BitConverter.GetBytes(snd));
-                //}
-                //    );
-                Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(buf)} size:{buf.Length}");
+                if (cb_isUdp.Checked)
+                {
+
+                    var i = BitConverter.ToInt64(buf, 0);
+                    Console.Write($"rec:{i}");
+                    Task.Run(() =>
+                                {
+                                    var snd = i + 1;
+                                    Console.WriteLine($" snd:{snd}");
+                                    client.SendOperationRequest(BitConverter.GetBytes(snd));
+                                }
+                            );
+                }
+                else
+                {
+                    Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(buf)} size:{buf.Length}");
+                }
             };
             client.OnConnected = (sid) =>
             {
@@ -92,12 +105,18 @@ namespace TestClient
         /// <param name="e"></param>
         private void button_Init_Click(object sender, EventArgs e)
         {
-            //client.SendOperationRequest(BitConverter.GetBytes((UInt64)1));
-            
-            client.SendOperationRequest(MakeBigBuff());
+            if (cb_isUdp.Checked)
+            {
+                client.SendOperationRequest(BitConverter.GetBytes((UInt64)1));
+            }
+            else
+            {
+                client.SendOperationRequest(MakeBigBuff());
+            }
+
         }
 
-        
+
 
         private void button_close_Click(object sender, EventArgs e)
         {

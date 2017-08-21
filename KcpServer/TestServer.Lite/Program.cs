@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace TestServer
+namespace TestServer.Lite
 {
     static class Program
     {
@@ -17,35 +17,38 @@ namespace TestServer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ServerForm1());
-            var t= Server.AsyncClose(TimeSpan.FromSeconds(10));
+            Application.Run(new Form1());
+
+            Server?.Close(TimeSpan.FromSeconds(10));
             Console.WriteLine("closing..");
-            t.Wait();            
+            
             Console.WriteLine("ServerClosed. Press any to to exit");
             Console.ReadKey();
         }
+
+
         public static void StartServer(IPEndPoint ipep)
         {
-            Server = new KcpServer.KcpServer();
-            App = new TestApplication();
+            Server = new KcpServer.Lite.UdpServerLite();
+            App = new TestApplicationLite();
             var sysid = "Test".ToCharArray().Select(a => (byte)a).ToArray();
             var appid = "App1".ToCharArray().Select(a => (byte)a).ToArray();
 
-            var sc = KcpServer.ServerConfig.Create()
+            var sc = KcpServer.Lite.ServerConfig.Create()
                 .SetSysId(sysid)
                 .SetApplicationData(appid)
                 .BindApplication(Program.App)
                 .SetTimeout(TimeSpan.FromSeconds(10))
-                .SetFiberPool(new Utilities.FiberPool(8))
+                //.SetFiberPool(new Utilities.FiberPool(8))
                 .SetLocalIpep(ipep)
                 .SetMaxPlayer(8)
                 ;
 
-            var t = Server.AsyncStart(sc);
+            Server.Start(sc);
 
-            t.Wait();
+            
         }
-        public static KcpServer.UdpServer Server;
-        public static TestApplication App;
+        public static KcpServer.Lite.UdpServerLite Server;
+        public static TestApplicationLite App;
     }
 }

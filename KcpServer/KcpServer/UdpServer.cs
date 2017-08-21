@@ -33,7 +33,11 @@ namespace KcpServer
                 .SetFiberPool(sc.Fp)
                 ;
 
-            var t = server.InitServerAsync(GetServerHandler(cm), sc.Localipep);
+            var t = server.InitServerAsync(GetServerHandler(cm), sc.Localipep,()=> {
+                sc.App.SetLocalEndPoint(server.LocalEndPoint);
+                sc.App.Setup();
+            });
+            t.Wait();
             var t2 = t.ContinueWith((a) =>
             {
                 if (a.Result == false)
@@ -46,20 +50,20 @@ namespace KcpServer
                 }
             }, TaskContinuationOptions.AttachedToParent);
 
-            var t3 = t.ContinueWith((a) =>
-            {
-                if (a.Result == false)
-                {
-                    DebugLog("init error");
-                }
-                else
-                {
-                    sc.App.SetLocalEndPoint(server.LocalEndPoint);
-                    sc.App.Setup();
-                }
+            //var t3 = t.ContinueWith((a) =>
+            //{
+            //    if (a.Result == false)
+            //    {
+            //        DebugLog("init error");
+            //    }
+            //    else
+            //    {
+            //        //sc.App.SetLocalEndPoint(server.LocalEndPoint);
+            //        //sc.App.Setup();
+            //    }
 
-            }, TaskContinuationOptions.AttachedToParent);
-            return t3;
+            //}, TaskContinuationOptions.AttachedToParent);
+            return t2;
         }
 
         public Task AsyncClose(TimeSpan closeTimeout)

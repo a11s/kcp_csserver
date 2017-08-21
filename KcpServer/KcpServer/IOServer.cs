@@ -29,7 +29,7 @@ namespace KcpServer
         public EndPoint LocalEndPoint { get => Channel?.LocalAddress; }
         //if tcp you need workers
         //IEventLoopGroup workergroup;
-        internal Task<bool> InitServerAsync(ChannelHandlerAdapter handler, IPEndPoint localipep)
+        internal Task<bool> InitServerAsync(ChannelHandlerAdapter handler, IPEndPoint localipep,Action afterchannel)
         {
             iogroup = new MultithreadEventLoopGroup();
             //workergroup = new MultithreadEventLoopGroup();
@@ -59,6 +59,7 @@ namespace KcpServer
                         }
                     }
                     DebugLog($"inited {ch.LocalAddress}");
+                    afterchannel.Invoke();
                 });
                 return Task.FromResult(true);
             }

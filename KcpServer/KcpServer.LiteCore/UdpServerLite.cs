@@ -73,10 +73,10 @@ namespace KcpServer.Lite
         {
             if (udp != null) { throw new InvalidOperationException("init twice"); }
             udp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            bool bNewBehavior = false;
-            byte[] dwBytesReturned = new byte[4];
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
+                bool bNewBehavior = false;
+                byte[] dwBytesReturned = new byte[4];
                 udp.IOControl((int)SIO_UDP_CONNRESET, BitConverter.GetBytes(bNewBehavior), dwBytesReturned);
             }
             udp.Blocking = false;

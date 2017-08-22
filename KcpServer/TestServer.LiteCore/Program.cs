@@ -16,6 +16,8 @@ namespace TestServer.Lite
         [STAThread]
         static void Main()
         {
+            Console.WriteLine(Environment.OSVersion.Platform);
+            Console.WriteLine(Environment.OSVersion.VersionString);
             if (Server != null)
             {
                 throw new InvalidOperationException("Already started");
@@ -24,7 +26,7 @@ namespace TestServer.Lite
             var str = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(str))
             {
-                str = "127.0.0.1:1000";
+                str = "0.0.0.0:1000";
             }
             var arr = str.Split(":"[0]);
             int port = 1000;

@@ -47,7 +47,7 @@ namespace KcpServer.Lite
         }
         public void Close(TimeSpan ts)
         {
-            
+
             cm.SyncClose(ts);
         }
 
@@ -75,7 +75,10 @@ namespace KcpServer.Lite
             udp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             bool bNewBehavior = false;
             byte[] dwBytesReturned = new byte[4];
-            udp.IOControl((int)SIO_UDP_CONNRESET, BitConverter.GetBytes(bNewBehavior), dwBytesReturned);
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                udp.IOControl((int)SIO_UDP_CONNRESET, BitConverter.GetBytes(bNewBehavior), dwBytesReturned);
+            }
             udp.Blocking = false;
             udp.Bind(sc.Localipep);
             DebugLog($"udp socket inited {udp.LocalEndPoint}");
@@ -195,7 +198,7 @@ namespace KcpServer.Lite
                         if (len == 0)
                         {
                             //heartbeat
-                            Console.WriteLine($"{peer.Context.SessionId} hb@{peer.LastPackTime}");
+                            //Console.WriteLine($"{peer.Context.SessionId} hb@{peer.LastPackTime}");
                         }
                         else
                         {

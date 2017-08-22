@@ -195,7 +195,7 @@ namespace KcpServer.Lite
                         if (len == 0)
                         {
                             //heartbeat
-                            Console.WriteLine($"{peer.Context.SessionId} hb@{peer.LastPackTime}");
+                            //Console.WriteLine($"{peer.Context.SessionId} hb@{peer.LastPackTime}");
                         }
                         else
                         {

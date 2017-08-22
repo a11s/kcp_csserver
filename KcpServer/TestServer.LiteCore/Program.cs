@@ -85,10 +85,7 @@ namespace TestServer.Lite
                 .SetLocalIpep(ipep)
                 .SetMaxPlayer(8)
                 ;
-
             Server.Start(sc);
-
-
         }
         public static KcpServer.Lite.UdpServerLite Server;
         public static TestApplicationLite App;

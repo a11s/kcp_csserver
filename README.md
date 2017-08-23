@@ -65,9 +65,10 @@
                     );
 
             };
-
             client.Connect(remoteipep);
         }
+        
+        
 
 ## 测试图 
 <img src='https://github.com/a11s/kcp_csserver/raw/master/KcpServer/TestClient/Images/kcpserver.png'/>  

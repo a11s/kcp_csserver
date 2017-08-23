@@ -41,7 +41,7 @@
         
 ### 用法 客户端  
 
-        
+
         private void button_init_Click(object sender, EventArgs e)
         {
                 if (client != null)

@@ -12,13 +12,15 @@ namespace TestServer
         public override PeerBase CreatePeer(PeerContext peerContext)
         {
             var peertype = Encoding.UTF8.GetString(peerContext.ApplicationData);
-            if (peertype == "testpeer")
+            if (peertype == "udppeer")
             {
-                return new TestPeer(peerContext);
-            }else if (peertype == "bigbufpeer")
+                return new TestUdpPeer(peerContext);
+            }
+            else if (peertype == "kcppeer")
             {
                 return new BigBuffPeer(peerContext);
-            }else if(peertype == "expeer")
+            }
+            else if (peertype == "mixpeer")
             {
                 return new ExPeer(peerContext);
             }

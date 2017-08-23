@@ -7,11 +7,11 @@ using KcpServer;
 using static Utilities.MakeTestBuff;
 namespace TestServer
 {
-    class TestPeer : KcpServer.KcpPeerBase
+    class TestUdpPeer : KcpServer.PeerBase
     {
-        public TestPeer(PeerContext pc) : base(pc)
+        public TestUdpPeer(PeerContext pc) : base(pc)
         {
-            Console.WriteLine($"{nameof(TestPeer)} sid:{pc.SessionId} created");
+            Console.WriteLine($"{nameof(TestUdpPeer)} sid:{pc.SessionId} created");
         }
 
         public override void OnOperationRequest(byte[] data)

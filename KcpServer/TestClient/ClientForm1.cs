@@ -36,17 +36,17 @@ namespace TestClient
             }
             if (cb_isUdp.Checked)
             {
-                client = new k.UdpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "testpeer".ToCharArray().Select(a => (byte)a).ToArray());
+                client = new k.UdpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "udppeer".ToCharArray().Select(a => (byte)a).ToArray());
             }
             else
             {
                 if (cb_unreliable.Checked)
                 {
-                    client = new k.KcpClientEx("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "expeer".ToCharArray().Select(a => (byte)a).ToArray());
+                    client = new k.KcpClientEx("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "mixpeer".ToCharArray().Select(a => (byte)a).ToArray());
                 }
                 else
                 {
-                    client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "bigbufpeer".ToCharArray().Select(a => (byte)a).ToArray());
+                    client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "kcppeer".ToCharArray().Select(a => (byte)a).ToArray());
                 }
             }
             var userid = uint.Parse(textBox_sid.Text);
@@ -133,7 +133,7 @@ namespace TestClient
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button_Init_Click(object sender, EventArgs e)
+        private void button_Send_Click(object sender, EventArgs e)
         {
             if (cb_isUdp.Checked)
             {
@@ -150,7 +150,7 @@ namespace TestClient
 
         private void button_close_Click(object sender, EventArgs e)
         {
-            client.Close();
+            client?.Close();
         }
 
         private void button_sendunreliable_Click(object sender, EventArgs e)

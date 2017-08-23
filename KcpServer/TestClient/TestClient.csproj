@@ -56,10 +56,37 @@
     <Compile Include="ClientForm1.Designer.cs">
       <DependentUpon>ClientForm1.cs</DependentUpon>
     </Compile>
+    <Compile Include="ClientKcp.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClientKcp.Designer.cs">
+      <DependentUpon>ClientKcp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ClientMix.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClientMix.Designer.cs">
+      <DependentUpon>ClientMix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ClientUdp.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ClientUdp.Designer.cs">
+      <DependentUpon>ClientUdp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ClientForm1.resx">
       <DependentUpon>ClientForm1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClientKcp.resx">
+      <DependentUpon>ClientKcp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClientMix.resx">
+      <DependentUpon>ClientMix.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ClientUdp.resx">
+      <DependentUpon>ClientUdp.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

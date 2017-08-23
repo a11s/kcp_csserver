@@ -32,7 +32,7 @@ namespace KcpClient
                 kcp = null;
             }
         }
-        void initKcp()
+         void initKcp()
         {
             releaseKcp();
             var errno = ikcp_create((uint)this.SessionId, (void*)0);
@@ -73,7 +73,7 @@ namespace KcpClient
         /// <param name="user"></param>
         /// <returns></returns>
 
-        int udp_output(byte* buf, int len, k.IKCPCB* kcp, void* user)
+        protected virtual int udp_output(byte* buf, int len, k.IKCPCB* kcp, void* user)
         {
             byte[] buff = new byte[len];
             Marshal.Copy(new IntPtr(buf), buff, 0, len);
@@ -86,27 +86,27 @@ namespace KcpClient
             }
             return 0;
         }
-        protected override void ProcessIncomingData(byte[] data)
+        protected override void ProcessIncomingData(byte[] data,int start,int len)
         {
 #if PRINTPACK
             printpack($"ikcp_input:{data.Length}:{string.Join(",", data)}");
 #endif
-            fixed (byte* p = &data[0])
+            fixed (byte* p = &data[start])
             {
-                ikcp_input(kcp, p, data.Length);
+                ikcp_input(kcp, p, len);
             }
         }
 
-        protected override void ProcessOutgoingData(byte[] buff)
+        protected override void ProcessOutgoingData(byte[] buff,int start,int len)
         {
             //give to kcp to determin how to send
             if (kcp == null)
             {
                 throw new NullReferenceException();
             }
-            fixed (byte* p = &buff[0])
+            fixed (byte* p = &buff[start])
             {
-                var ret = ikcp_send(kcp, p, buff.Length);
+                var ret = ikcp_send(kcp, p, len);
             }
         }
         byte[] kb = new byte[Utilities.PackSettings.MAX_RECBUFF_LEN];

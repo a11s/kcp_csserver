@@ -41,11 +41,13 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.button_close = new System.Windows.Forms.Button();
             this.cb_isUdp = new System.Windows.Forms.CheckBox();
+            this.cb_unreliable = new System.Windows.Forms.CheckBox();
+            this.button_sendunreliable = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBox_msg
             // 
-            this.textBox_msg.Location = new System.Drawing.Point(147, 91);
+            this.textBox_msg.Location = new System.Drawing.Point(147, 99);
             this.textBox_msg.Name = "textBox_msg";
             this.textBox_msg.Size = new System.Drawing.Size(100, 21);
             this.textBox_msg.TabIndex = 19;
@@ -53,7 +55,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 91);
+            this.button1.Location = new System.Drawing.Point(12, 99);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 18;
@@ -64,7 +66,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(116, 51);
+            this.label3.Location = new System.Drawing.Point(116, 59);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(23, 12);
             this.label3.TabIndex = 17;
@@ -106,7 +108,7 @@
             // 
             // textBox_sid
             // 
-            this.textBox_sid.Location = new System.Drawing.Point(147, 48);
+            this.textBox_sid.Location = new System.Drawing.Point(147, 56);
             this.textBox_sid.Name = "textBox_sid";
             this.textBox_sid.Size = new System.Drawing.Size(100, 21);
             this.textBox_sid.TabIndex = 12;
@@ -114,7 +116,7 @@
             // 
             // button_init
             // 
-            this.button_init.Location = new System.Drawing.Point(12, 46);
+            this.button_init.Location = new System.Drawing.Point(12, 54);
             this.button_init.Name = "button_init";
             this.button_init.Size = new System.Drawing.Size(75, 23);
             this.button_init.TabIndex = 11;
@@ -130,7 +132,7 @@
             // 
             // button_close
             // 
-            this.button_close.Location = new System.Drawing.Point(269, 51);
+            this.button_close.Location = new System.Drawing.Point(269, 59);
             this.button_close.Name = "button_close";
             this.button_close.Size = new System.Drawing.Size(75, 23);
             this.button_close.TabIndex = 20;
@@ -141,20 +143,42 @@
             // cb_isUdp
             // 
             this.cb_isUdp.AutoSize = true;
-            this.cb_isUdp.Checked = true;
-            this.cb_isUdp.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cb_isUdp.Location = new System.Drawing.Point(14, 24);
+            this.cb_isUdp.Location = new System.Drawing.Point(14, 30);
             this.cb_isUdp.Name = "cb_isUdp";
             this.cb_isUdp.Size = new System.Drawing.Size(72, 16);
             this.cb_isUdp.TabIndex = 21;
             this.cb_isUdp.Text = "Test UDP";
             this.cb_isUdp.UseVisualStyleBackColor = true;
             // 
+            // cb_unreliable
+            // 
+            this.cb_unreliable.AutoSize = true;
+            this.cb_unreliable.Checked = true;
+            this.cb_unreliable.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cb_unreliable.Location = new System.Drawing.Point(118, 33);
+            this.cb_unreliable.Name = "cb_unreliable";
+            this.cb_unreliable.Size = new System.Drawing.Size(102, 16);
+            this.cb_unreliable.TabIndex = 22;
+            this.cb_unreliable.Text = "Test ClientEx";
+            this.cb_unreliable.UseVisualStyleBackColor = true;
+            // 
+            // button_sendunreliable
+            // 
+            this.button_sendunreliable.Location = new System.Drawing.Point(14, 155);
+            this.button_sendunreliable.Name = "button_sendunreliable";
+            this.button_sendunreliable.Size = new System.Drawing.Size(181, 23);
+            this.button_sendunreliable.TabIndex = 23;
+            this.button_sendunreliable.Text = "Send Unreliable";
+            this.button_sendunreliable.UseVisualStyleBackColor = true;
+            this.button_sendunreliable.Click += new System.EventHandler(this.button_sendunreliable_Click);
+            // 
             // ClientForm1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(566, 245);
+            this.Controls.Add(this.button_sendunreliable);
+            this.Controls.Add(this.cb_unreliable);
             this.Controls.Add(this.cb_isUdp);
             this.Controls.Add(this.button_close);
             this.Controls.Add(this.textBox_msg);
@@ -187,6 +211,8 @@
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button button_close;
         private System.Windows.Forms.CheckBox cb_isUdp;
+        private System.Windows.Forms.CheckBox cb_unreliable;
+        private System.Windows.Forms.Button button_sendunreliable;
     }
 }
 

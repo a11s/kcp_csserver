@@ -169,6 +169,7 @@
     <Compile Include="Codec\CodecBase.cs" />
     <Compile Include="Codec\KcpCodec.cs" />
     <Compile Include="ConnectionManager.cs" />
+    <Compile Include="KCPClasses\KcpPeerEx.cs" />
     <Compile Include="KCPClasses\KcpServer.cs" />
     <Compile Include="KCPClasses\KcpServerHandler.cs" />
     <Compile Include="KCPClasses\KcpPeerBase.cs" />

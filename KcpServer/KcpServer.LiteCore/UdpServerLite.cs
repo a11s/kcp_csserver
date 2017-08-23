@@ -21,7 +21,7 @@ namespace KcpServer.Lite
 #endif
         };
         ConnectionManager cm;
-        ServerPackBuilder defpb;
+        ServerPackBuilderEx defpb;
         ApplicationBase App { get => connMan.App; }
         ConnectionManager connMan = null;
 
@@ -39,7 +39,7 @@ namespace KcpServer.Lite
                 .BindApplication(sc.App)
                 .SetTimeout(sc.Timeout)
                 ;
-            defpb = new ServerPackBuilder(cm._SysId, 0);
+            defpb = new ServerPackBuilderEx(cm._SysId, 0);
             connMan = cm;
             initSocket(sc);
             sc.App.SetLocalEndPoint(udp.LocalEndPoint);

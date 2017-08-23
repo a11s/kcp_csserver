@@ -23,7 +23,7 @@ namespace KcpServer
         protected ConcurrentQueue<byte[]> IncomingData = new ConcurrentQueue<byte[]>();
         protected ConcurrentQueue<byte[]> OutgoingData = new ConcurrentQueue<byte[]>();
 
-        protected ServerPackBuilder defpb;
+        protected ServerPackBuilderEx defpb;
         Codec.CodecBase defEncoder;
 
         public virtual void OnDisconnect(DateTime lastPackTime, TimeSpan t)
@@ -58,17 +58,16 @@ namespace KcpServer
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public void SendOperationResponse(byte[] data)
+        public virtual void SendOperationResponse(byte[] data)
         {
             BeforeSendOutgoing(data);
-
         }
 
         public PeerBase(PeerContext pc)
         {
             this.Context = pc;
             var fp = pc.ConnectionManager.Workfiberpool;
-            defpb = new ServerPackBuilder(pc.ConnectionManager.SysId, pc.SessionId);
+            defpb = new ServerPackBuilderEx(pc.ConnectionManager.SysId, pc.SessionId);
             defEncoder = pc.Codec;
 
             this._fiber = new ThreadPoolFiber(fp, this.GetHashCode());

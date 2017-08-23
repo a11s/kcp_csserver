@@ -21,7 +21,7 @@ namespace KcpClient
         Socket udp;
         IPEndPoint remote_ipep;
         //IPEndPoint local_ipep;
-        ServerPackBuilder defpb;
+        ServerPackBuilderEx defpb;
         Thread ioThread;
         byte[] applicationData;
         byte[] heartbeatData = new byte[0];
@@ -29,14 +29,14 @@ namespace KcpClient
         bool _connected = false;
         public UdpClient(byte a, byte b, byte c, byte d, int sid, byte[] appData)
         {
-            defpb = new ServerPackBuilder(a, b, c, d, sid);
+            defpb = new ServerPackBuilderEx(a, b, c, d, sid);
             SessionId = sid;
             applicationData = appData;
         }
 
         public UdpClient(byte[] arr, int sid, byte[] appData)
         {
-            defpb = new ServerPackBuilder(arr, sid);
+            defpb = new ServerPackBuilderEx(arr, sid);
             SessionId = sid;
             applicationData = appData;
         }
@@ -69,13 +69,13 @@ namespace KcpClient
 
         public int SessionId { get; private set; }
 
-        public void SendOperationRequest(byte[] buff)
+        public virtual void SendOperationRequest(byte[] buff)
         {
             if (!Connected)
             {
                 throw new InvalidOperationException("not connected");
             }
-            ProcessOutgoingData(buff);
+            ProcessOutgoingData(buff, 0, buff.Length);
 
         }
 
@@ -128,7 +128,7 @@ namespace KcpClient
             bool bNewBehavior = false;
             byte[] dwBytesReturned = new byte[4];
             udp.IOControl((int)SIO_UDP_CONNRESET, BitConverter.GetBytes(bNewBehavior), dwBytesReturned);
-            defpb = new ServerPackBuilder(defpb.GetSysIdBuf(), SessionId);
+            defpb = new ServerPackBuilderEx(defpb.GetSysIdBuf(), SessionId);
             remote_ipep = ipep;
             udp.Connect(remote_ipep);
             ioThread = new Thread(ioLoop);
@@ -159,7 +159,7 @@ namespace KcpClient
             }
             byte[] hsbuff = defpb.GetSysIdBuf();
             byte[] appdata = applicationData;
-            ServerPackBuilder tspb = new ServerPackBuilder(hsbuff, 0);
+            var tspb = new ServerPackBuilderEx(hsbuff, 0);
             byte[] sendbuff = new byte[PackSettings.HEADER_LEN + appdata.Length];
             tspb.Write(sendbuff, appdata, 0, appdata.Length);
             udp.SendTo(sendbuff, remote_ipep);
@@ -206,7 +206,7 @@ namespace KcpClient
                             if (tmp > 0)
                             {
                                 this.SessionId = tmp;
-                                defpb = new ServerPackBuilder(defpb.GetSysIdBuf(), this.SessionId);
+                                defpb = new ServerPackBuilderEx(defpb.GetSysIdBuf(), this.SessionId);
                                 debug?.Invoke($"{nameof(Handshake)}:{nameof(SessionId)}={SessionId}");
                                 OnHandShake();
 
@@ -221,7 +221,7 @@ namespace KcpClient
                         }
                         else
                         {
-                            ProcessIncomingData(data);
+                            ProcessIncomingData(data, 0, data.Length);
 
                         }
                     }
@@ -263,13 +263,31 @@ namespace KcpClient
 
         }
 
-        protected virtual void ProcessIncomingData(byte[] data)
+        protected virtual void ProcessIncomingData(byte[] data, int start, int len)
         {
-            Incoming.Enqueue(data);
+            if (start == 0)
+            {
+                Incoming.Enqueue(data);
+            }
+            else
+            {
+                var buf = new byte[len];
+                Array.Copy(data, start, buf, 0, len);
+                Incoming.Enqueue(buf);
+            }
         }
-        protected virtual void ProcessOutgoingData(byte[] buff)
+        protected virtual void ProcessOutgoingData(byte[] data, int start, int len)
         {
-            Outgoing.Enqueue(buff);
+            if (start == 0)
+            {
+                Outgoing.Enqueue(data);
+            }
+            else
+            {
+                var buf = new byte[len];
+                Array.Copy(data, start, buf, 0, len);
+                Outgoing.Enqueue(buf);
+            }
         }
 
         private void InternalError(int datasize)

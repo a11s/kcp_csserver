@@ -23,6 +23,7 @@ namespace TestClient
         #region MyRegion
 
         k.UdpClient client;
+        k.KcpClientEx clientex { get => client as KcpClient.KcpClientEx; }
         IPEndPoint localipep;
         IPEndPoint remoteipep;
         #endregion
@@ -39,8 +40,14 @@ namespace TestClient
             }
             else
             {
-                //client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "testpeer".ToCharArray().Select(a => (byte)a).ToArray());
-                client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "bigbufpeer".ToCharArray().Select(a => (byte)a).ToArray());
+                if (cb_unreliable.Checked)
+                {
+                    client = new k.KcpClientEx("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "expeer".ToCharArray().Select(a => (byte)a).ToArray());
+                }
+                else
+                {
+                    client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "bigbufpeer".ToCharArray().Select(a => (byte)a).ToArray());
+                }
             }
             var userid = uint.Parse(textBox_sid.Text);
             var arr = textBox_local.Text.Split(":"[0]);
@@ -57,14 +64,37 @@ namespace TestClient
                     Task.Run(() =>
                                 {
                                     var snd = i + 1;
-                                    Console.WriteLine($" snd:{snd}");
+                                    Console.WriteLine($"udp snd:{snd}");
                                     client.SendOperationRequest(BitConverter.GetBytes(snd));
                                 }
                             );
                 }
                 else
                 {
-                    Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(buf)} size:{buf.Length}");
+                    if (cb_unreliable.Checked)//is unreliable
+                    {
+                        if (buf.Length == sizeof(UInt64))
+                        {
+                            var i = BitConverter.ToInt64(buf, 0);
+                            Console.Write($"rec:{i}");
+                            Task.Run(() =>
+                            {
+                                var snd = i + 1;
+                                Console.WriteLine($"unreliable snd:{snd}");
+                                clientex?.SendOperationRequest(BitConverter.GetBytes(snd), true);
+                            }
+                            );
+                        }
+                        else
+                        {
+                            //
+                            Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(buf)} size:{buf.Length} reliable");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(buf)} size:{buf.Length} client or clientex.reliable");
+                    }
                 }
             };
             client.OnConnected = (sid) =>
@@ -110,7 +140,7 @@ namespace TestClient
                 client.SendOperationRequest(BitConverter.GetBytes((UInt64)1));
             }
             else
-            {
+            {                
                 client.SendOperationRequest(MakeBigBuff());
             }
 
@@ -121,6 +151,11 @@ namespace TestClient
         private void button_close_Click(object sender, EventArgs e)
         {
             client.Close();
+        }
+
+        private void button_sendunreliable_Click(object sender, EventArgs e)
+        {
+            clientex?.SendOperationRequest(BitConverter.GetBytes((UInt64)1), true);
         }
     }
 }

@@ -23,4 +23,10 @@ namespace Utilities
         public const int MAX_RECBUFF_LEN = 1024 * 1024 * 2;//2MB
     }
 
+    public enum PackType
+    {
+        Udp = 0,
+        Kcp = 1,
+    }
+
 }

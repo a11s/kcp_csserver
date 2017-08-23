@@ -22,12 +22,12 @@ namespace KcpServer
         }
         ApplicationBase App { get => connMan.App; }
 
-        ServerPackBuilder defpb;
+        ServerPackBuilderEx defpb;
         byte[] recdatabuff = new byte[PackSettings.MAX_DATA_LEN + PackSettings.HEADER_LEN];
         ConnectionManager connMan = null;
         public UdpServerHandler(ConnectionManager man)
         {
-            defpb = new ServerPackBuilder(man._SysId, 0);
+            defpb = new ServerPackBuilderEx(man._SysId, 0);
             connMan = man;
         }
         protected override void ChannelRead0(IChannelHandlerContext ctx, DatagramPacket msg)

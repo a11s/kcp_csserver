@@ -17,6 +17,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\TestServer.Lite\TestApplication.cs" Link="TestApplication.cs" />
+    <Compile Include="..\TestServer.Lite\TestPeer.cs" Link="TestPeer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\KcpServer.LiteCore\KcpServer.LiteCore.csproj" />
   </ItemGroup>
 

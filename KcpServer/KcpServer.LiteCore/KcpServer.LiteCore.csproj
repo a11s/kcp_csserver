@@ -10,15 +10,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\KcpServerLite\ApplicationBase.cs" Link="ApplicationBase.cs" />
+    <Compile Include="..\KcpServerLite\Codec\CodecBase.cs" Link="Codec\CodecBase.cs" />
+    <Compile Include="..\KcpServerLite\Codec\kcpcodec.cs" Link="Codec\kcpcodec.cs" />
+    <Compile Include="..\KcpServerLite\connectionmanager.cs" Link="connectionmanager.cs" />
+    <Compile Include="..\KcpServerLite\KCPClasses\kcppeerbase.cs" Link="KCPClasses\kcppeerbase.cs" />
+    <Compile Include="..\KcpServerLite\KCPClasses\KcpPeerEx.cs" Link="KCPClasses\KcpPeerEx.cs" />
+    <Compile Include="..\KcpServerLite\KCPClasses\KcpServerLite.cs" Link="KCPClasses\KcpServerLite.cs" />
+    <Compile Include="..\KcpServerLite\PeerBase.cs" Link="PeerBase.cs" />
+    <Compile Include="..\KcpServerLite\PeerContext.cs" Link="PeerContext.cs" />
+    <Compile Include="..\KcpServerLite\SendChannel.cs" Link="SendChannel.cs" />
+    <Compile Include="..\KcpServerLite\ServerConfig.cs" Link="ServerConfig.cs" />
+    <Compile Include="..\KcpServerLite\UdpServerLite.cs" Link="UdpServerLite.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="kcpwarpper">
       <HintPath>kcpwarpper.dll</HintPath>
     </Reference>
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="kcplib.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="kcplib.pdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -31,6 +43,16 @@
     <None Update="kcpwarpper.pdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Codec\" />
+    <Folder Include="KCPClasses\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\KcpServerLite\kcplib.dll" Link="kcplib.dll" />
+    <None Include="..\KcpServerLite\kcplib.pdb" Link="kcplib.pdb" />
   </ItemGroup>
 
   <Import Project="..\Utilities\Utilities.projitems" Label="Shared" />

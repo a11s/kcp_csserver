@@ -22,11 +22,10 @@ namespace KcpServer.Lite
             {
                 throw new NullReferenceException("kcp codec lost");
             }
-
             realsend = new k.d_output(udp_output);
             pc.EncoderData->output = Marshal.GetFunctionPointerForDelegate(realsend);
         }
-        int udp_output(byte* buf, int len, k.IKCPCB* kcp, void* user)
+        protected virtual int udp_output(byte* buf, int len, k.IKCPCB* kcp, void* user)
         {
             byte[] kcppack = new byte[len];
             Marshal.Copy(new IntPtr(buf), kcppack, 0, len);
@@ -36,10 +35,6 @@ namespace KcpServer.Lite
             var sendbuf = new byte[PackSettings.HEADER_LEN + kcppack.Length];
             defpb.Write(sendbuf, kcppack, 0, kcppack.Length);
             OutgoingData.Enqueue(sendbuf);
-
-
-
-            //this.Channel.WriteAndFlushAsync(new DotNetty.Transport.Channels.Sockets.DatagramPacket(DotNetty.Buffers.Unpooled.Buffer(sendbuf.Length).WriteBytes(sendbuf), Context.RemoteEP));
             return 0;
         }
         protected override void BeforeOperationRequest(byte[] buf)

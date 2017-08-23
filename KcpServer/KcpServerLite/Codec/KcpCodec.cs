@@ -68,4 +68,12 @@ namespace KcpServer.Lite.Codec
             Console.WriteLine("kcp encoder close");
         }
     }
+
+    public unsafe class KcpCodecEx : KcpCodec
+    {
+        public KcpCodecEx(PeerContext x) : base(x)
+        {
+        }
+        public override int MaxKcpPackSize => Utilities.PackSettings.MAX_DATA_LEN - 1;
+    }
 }

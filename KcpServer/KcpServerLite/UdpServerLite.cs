@@ -21,7 +21,7 @@ namespace KcpServer.Lite
 #endif
         };
         ConnectionManager cm;
-        ServerPackBuilder defpb;
+        ServerPackBuilderEx defpb;
         ApplicationBase App { get => connMan.App; }
         ConnectionManager connMan = null;
 
@@ -39,7 +39,7 @@ namespace KcpServer.Lite
                 .BindApplication(sc.App)
                 .SetTimeout(sc.Timeout)
                 ;
-            defpb = new ServerPackBuilder(cm._SysId, 0);
+            defpb = new ServerPackBuilderEx(cm._SysId, 0);
             connMan = cm;
             initSocket(sc);
             sc.App.SetLocalEndPoint(udp.LocalEndPoint);
@@ -133,7 +133,7 @@ namespace KcpServer.Lite
                 {
                     //请求握手
                     var appdata = new byte[len];
-                    Array.Copy(udprecbuff, appdata, len);
+                    Array.Copy(data, appdata, len);
                     var x = new PeerContext() { ApplicationData = appdata, RemoteEP = recipep, LocalEP = udp.LocalEndPoint, SessionId = 0, ConnectionManager = connMan };
                     if (!connMan.App.PreCreatePeer(x))
                     {

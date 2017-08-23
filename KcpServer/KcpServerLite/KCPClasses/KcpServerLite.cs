@@ -13,8 +13,16 @@ namespace KcpServer.Lite
     {
         protected override void BuildCodecsBeforePlayerCreated(PeerContext x)
         {
-            DebugLog($"kcp {nameof(BuildCodecsBeforePlayerCreated)}");
+            DebugLog($"{nameof(Codec.KcpCodec)} {nameof(BuildCodecsBeforePlayerCreated)}");
             x.Codec = new Codec.KcpCodec(x);
+        }
+    }
+    public class KcpServerExLite : KcpServerLite
+    {
+        protected override void BuildCodecsBeforePlayerCreated(PeerContext x)
+        {
+            DebugLog($"{nameof(Codec.KcpCodecEx)}  {nameof(BuildCodecsBeforePlayerCreated)}");
+            x.Codec = new Codec.KcpCodecEx(x);
         }
     }
 }

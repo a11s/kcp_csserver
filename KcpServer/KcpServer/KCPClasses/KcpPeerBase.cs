@@ -41,8 +41,8 @@ namespace KcpServer
         {
 #if PRINTPACK
             Console.WriteLine($"ikcp_input:size{buf.Length}:{string.Join(",", buf)}");
-#endif
             Console.WriteLine($"rec:{buf.Length}");
+#endif
             fixed (byte* p = &buf[0])
             {
                 ikcp_input(this.Context.EncoderData, p, buf.Length);

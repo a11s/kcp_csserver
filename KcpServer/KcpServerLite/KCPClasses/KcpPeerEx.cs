@@ -8,7 +8,7 @@ using static kcpwarpper.KCP;
 using System.Runtime.InteropServices;
 using Utilities;
 
-namespace KcpServer
+namespace KcpServer.Lite
 {
     /// <summary>
     /// 这个支持不可靠协议

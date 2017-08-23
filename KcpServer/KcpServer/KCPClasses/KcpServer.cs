@@ -14,7 +14,7 @@ namespace KcpServer
             return new KcpServerHandler(cm);
         }
     }
-    public class KcpServerEx : UdpServer
+    public class KcpServerEx : KcpServer
     {
         protected override ChannelHandlerAdapter GetServerHandler(ConnectionManager cm)
         {

@@ -51,6 +51,7 @@
     <Compile Include="Codec\KcpCodec.cs" />
     <Compile Include="ConnectionManager.cs" />
     <Compile Include="KCPClasses\KcpPeerBase.cs" />
+    <Compile Include="KCPClasses\KcpPeerEx.cs" />
     <Compile Include="KCPClasses\KcpServerLite.cs" />
     <Compile Include="PeerBase.cs" />
     <Compile Include="PeerContext.cs" />

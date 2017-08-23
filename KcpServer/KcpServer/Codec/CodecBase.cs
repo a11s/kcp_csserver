@@ -8,18 +8,11 @@ namespace KcpServer.Codec
 {
     public class CodecBase
     {
-        //public virtual byte[] Encode(byte[] data)
-        //{
-        //    return data;
-        //}
         public virtual void Close()
         {
-
+#if DEBUG
+            Console.WriteLine($"{nameof(CodecBase)} {nameof(Close)}");
+#endif
         }
-        //public virtual byte[] Decode(byte[] data)
-        //{
-        //    return data;
-        //}       
-
     }
 }

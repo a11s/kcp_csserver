@@ -1,44 +1,32 @@
-﻿using System;
+﻿using KcpServer.Lite;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Utilities.MakeTestBuff;
-
-namespace KcpServer.Lite
+namespace TestServer.Lite
 {
-    public class TestPeer : KcpServer.Lite.PeerBase
+    class TestUdpPeer : PeerBase
     {
-        public TestPeer(PeerContext pc) : base(pc)
+        public TestUdpPeer(PeerContext pc) : base(pc)
         {
-            Console.WriteLine($"{nameof(TestPeer)} ctor");
+            Console.WriteLine($"{nameof(TestUdpPeer)} sid:{pc.SessionId} created");
         }
+
         public override void OnOperationRequest(byte[] data)
         {
             var i = BitConverter.ToInt64(data, 0);
-            Console.Write($"{this.Context.SessionId}rec:{i}");
-            Fiber.Enqueue(() =>
-                     {
-                         var snd = i + 1;
-                         Console.WriteLine($" snd:{snd}");
-                         SendOperationResponse(BitConverter.GetBytes(snd));
-                     }
-                     );
-        }
-
-        public override void OnDisconnect(DateTime lastPackTime, TimeSpan t)
-        {
-            base.OnDisconnect(lastPackTime, t);
-            Console.WriteLine($"{nameof(TestPeer)} {nameof(OnDisconnect)}");
+            var snd = i + 1;
+            this.SendOperationResponse(BitConverter.GetBytes(snd));
+            Console.WriteLine($"sid:{this.SessionId}->rec:{i} snd:{snd}");
         }
     }
-
-
-    public class TestKcpPeer : KcpServer.Lite.KcpPeerBase
+    public class BigBuffPeer : KcpPeerBase
     {
-        public TestKcpPeer(PeerContext pc) : base(pc)
+        public BigBuffPeer(PeerContext pc) : base(pc)
         {
-            Console.WriteLine($"{nameof(TestKcpPeer)} sid:{pc.SessionId} created");
+            Console.WriteLine($"{nameof(BigBuffPeer)} sid:{pc.SessionId} created");
         }
 
         public override void OnOperationRequest(byte[] data)
@@ -46,6 +34,32 @@ namespace KcpServer.Lite
             Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(data)} size:{data.Length}");
             //send back to client
             SendOperationResponse(data);
+        }
+    }
+
+    public class ExPeer : KcpPeerEx
+    {
+        public ExPeer(PeerContext pc) : base(pc)
+        {
+            Console.WriteLine($"{nameof(ExPeer)} sid:{pc.SessionId} created");
+        }
+
+        public override void OnOperationRequest(byte[] data)
+        {
+            //貌似这里不知道是不是非可靠消息传递过来的，没有暴露到接口层面。不过貌似意义不大，反正收到了指令，在乎这个指令是怎么来的吗？
+            if (data.Length==sizeof(UInt64))
+            {
+                var i = BitConverter.ToInt64(data, 0);
+                var snd = i + 1;
+                this.SendOperationResponse(BitConverter.GetBytes(snd),true);
+                Console.WriteLine($"sid:{this.SessionId}->rec:{i} snd:{snd}");
+            }
+            else
+            {
+                Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(data)} size:{data.Length}");
+                //send back to client
+                SendOperationResponse(data);
+            }
         }
     }
 }

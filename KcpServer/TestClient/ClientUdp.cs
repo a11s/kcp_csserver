@@ -39,7 +39,7 @@ namespace TestClient
             client.OnOperationResponse = (buf) =>
             {
                 var i = BitConverter.ToInt64(buf, 0);
-                Console.Write($"rec:{i}");
+                //Console.Write($"rec:{i}");
                 Task.Run(() =>
                 {
                     var snd = i + 1;

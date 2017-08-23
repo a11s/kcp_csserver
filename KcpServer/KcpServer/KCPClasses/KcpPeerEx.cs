@@ -49,7 +49,7 @@ namespace KcpServer
                     case PackType.Kcp:
                         fixed (byte* p = &buf[1])
                         {
-                            ikcp_input(this.Context.EncoderData, p, buf.Length-1);
+                            ikcp_input(this.Context.EncoderData, p, buf.Length - 1);
                         }
                         break;
                     default:
@@ -71,9 +71,10 @@ namespace KcpServer
                     OutgoingData.Enqueue(sendbuf);
                     break;
                 case PackType.Kcp:
-                    fixed (byte* b = &data[0])
+                    //交给kcp需要去掉第一个字节，不是直接发
+                    fixed (byte* b = &data[1])
                     {
-                        ikcp_send(this.Context.EncoderData, b, data.Length);
+                        ikcp_send(this.Context.EncoderData, b, data.Length-1);
                     }
                     break;
                 default:
@@ -88,7 +89,7 @@ namespace KcpServer
         }
         public void SendOperationResponse(byte[] data, bool unreliable)
         {
-            var senddata = new byte[data.Length+1];
+            var senddata = new byte[data.Length + 1];
             Array.Copy(data, 0, senddata, 1, data.Length);
             if (unreliable)
             {

@@ -26,7 +26,7 @@ namespace TestServer
         }
         public static void StartServer(IPEndPoint ipep)
         {
-            Server = new KcpServer.KcpServer();
+            Server = new KcpServer.KcpServerEx();
             App = new TestApplication();
             var sysid = "Test".ToCharArray().Select(a => (byte)a).ToArray();
             var appid = "App1".ToCharArray().Select(a => (byte)a).ToArray();

@@ -111,12 +111,13 @@ namespace KcpClient
 #if PRINTPACK
             printpack($"kcp_output:{buff.Length}:{string.Join(",",buff)}");
 #endif
-            buf[0] = (byte)Utilities.PackType.Kcp;
+            buff[0] = (byte)Utilities.PackType.Kcp;
             if (Outgoing != null)
             {
                 Outgoing.Enqueue(buff);
             }
             return 0;
         }
+        public override int MaxKcpPackSize => Utilities.PackSettings.MAX_DATA_LEN - 1;
     }
 }

@@ -167,7 +167,7 @@ namespace KcpServer
         /// <returns></returns>
         public ConnectionManager SetApplicationData(byte[] buff)
         {
-            if (buff.Length > ToServerPackBuilder.MAX_DATA_LEN)
+            if (buff.Length > PackSettings.MAX_DATA_LEN)
             {
                 throw new InvalidOperationException("ConnReq too long");
             }

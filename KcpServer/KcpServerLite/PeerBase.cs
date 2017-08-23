@@ -21,7 +21,7 @@ namespace KcpServer.Lite
         protected Queue<byte[]> IncomingData = new Queue<byte[]>();
         protected Queue<byte[]> OutgoingData = new Queue<byte[]>();
 
-        protected ToServerPackBuilder defpb;
+        protected ServerPackBuilder defpb;
         Codec.CodecBase defEncoder;
 
         public virtual void OnDisconnect(DateTime lastPackTime, TimeSpan t)
@@ -69,7 +69,7 @@ namespace KcpServer.Lite
         {
             this.Context = pc;
             //var fp = pc.ConnectionManager.Workfiberpool;
-            defpb = new ToServerPackBuilder(pc.ConnectionManager.SysId, pc.SessionId);
+            defpb = new ServerPackBuilder(pc.ConnectionManager.SysId, pc.SessionId);
             defEncoder = pc.Codec;
 
             //this._fiber = new ThreadPoolFiber(fp, this.GetHashCode());
@@ -118,7 +118,7 @@ namespace KcpServer.Lite
 
         protected virtual void BeforeSendOutgoing(byte[] data)
         {
-            var sendbuf = new byte[ToServerPackBuilder.HEADER_LEN + data.Length];
+            var sendbuf = new byte[PackSettings.HEADER_LEN + data.Length];
             defpb.Write(sendbuf, data, 0, data.Length);
             OutgoingData.Enqueue(sendbuf);
         }

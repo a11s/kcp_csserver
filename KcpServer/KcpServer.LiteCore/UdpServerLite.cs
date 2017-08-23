@@ -21,7 +21,7 @@ namespace KcpServer.Lite
 #endif
         };
         ConnectionManager cm;
-        ToServerPackBuilder defpb;
+        ServerPackBuilder defpb;
         ApplicationBase App { get => connMan.App; }
         ConnectionManager connMan = null;
 
@@ -39,7 +39,7 @@ namespace KcpServer.Lite
                 .BindApplication(sc.App)
                 .SetTimeout(sc.Timeout)
                 ;
-            defpb = new ToServerPackBuilder(cm._SysId, 0);
+            defpb = new ServerPackBuilder(cm._SysId, 0);
             connMan = cm;
             initSocket(sc);
             sc.App.SetLocalEndPoint(udp.LocalEndPoint);
@@ -96,7 +96,7 @@ namespace KcpServer.Lite
         #endregion
 
         DateTime lastUpdateSocketTime = DateTime.Now;
-        Byte[] udprecbuff = new byte[Utilities.ToServerPackBuilder.MAX_RECBUFF_LEN];
+        Byte[] udprecbuff = new byte[Utilities.PackSettings.MAX_RECBUFF_LEN];
         EndPoint recipep = new IPEndPoint(0, 0);
         void UpdateSocket()
         {

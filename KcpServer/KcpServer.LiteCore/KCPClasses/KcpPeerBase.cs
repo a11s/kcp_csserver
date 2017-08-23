@@ -33,7 +33,7 @@ namespace KcpServer.Lite
 #if PRINTPACK
             Console.WriteLine($"kcp_output:size{kcppack.Length}:{string.Join(",", kcppack)}");
 #endif
-            var sendbuf = new byte[ToServerPackBuilder.HEADER_LEN + kcppack.Length];
+            var sendbuf = new byte[PackSettings.HEADER_LEN + kcppack.Length];
             defpb.Write(sendbuf, kcppack, 0, kcppack.Length);
             OutgoingData.Enqueue(sendbuf);
 
@@ -61,7 +61,7 @@ namespace KcpServer.Lite
                 ikcp_send(this.Context.EncoderData, b, data.Length);
             }
         }
-        byte[] recbuf = new byte[Utilities.ToServerPackBuilder.MAX_RECBUFF_LEN];
+        byte[] recbuf = new byte[Utilities.PackSettings.MAX_RECBUFF_LEN];
         protected override void DeriverUpdate()
         {
             fixed (byte* b = &recbuf[0])

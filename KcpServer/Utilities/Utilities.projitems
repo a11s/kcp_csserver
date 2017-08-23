@@ -14,5 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)IFiber.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MakeTestBuff.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PPack.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ServerPackBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ServerPackBuilderEx.cs" />
   </ItemGroup>
 </Project>

@@ -21,7 +21,7 @@ namespace KcpClient
         Socket udp;
         IPEndPoint remote_ipep;
         //IPEndPoint local_ipep;
-        ToServerPackBuilder defpb;
+        ServerPackBuilder defpb;
         Thread ioThread;
         byte[] applicationData;
         byte[] heartbeatData = new byte[0];
@@ -29,14 +29,14 @@ namespace KcpClient
         bool _connected = false;
         public UdpClient(byte a, byte b, byte c, byte d, int sid, byte[] appData)
         {
-            defpb = new ToServerPackBuilder(a, b, c, d, sid);
+            defpb = new ServerPackBuilder(a, b, c, d, sid);
             SessionId = sid;
             applicationData = appData;
         }
 
         public UdpClient(byte[] arr, int sid, byte[] appData)
         {
-            defpb = new ToServerPackBuilder(arr, sid);
+            defpb = new ServerPackBuilder(arr, sid);
             SessionId = sid;
             applicationData = appData;
         }
@@ -128,7 +128,7 @@ namespace KcpClient
             bool bNewBehavior = false;
             byte[] dwBytesReturned = new byte[4];
             udp.IOControl((int)SIO_UDP_CONNRESET, BitConverter.GetBytes(bNewBehavior), dwBytesReturned);
-            defpb = new ToServerPackBuilder(defpb.GetSysIdBuf(), SessionId);
+            defpb = new ServerPackBuilder(defpb.GetSysIdBuf(), SessionId);
             remote_ipep = ipep;
             udp.Connect(remote_ipep);
             ioThread = new Thread(ioLoop);
@@ -159,8 +159,8 @@ namespace KcpClient
             }
             byte[] hsbuff = defpb.GetSysIdBuf();
             byte[] appdata = applicationData;
-            ToServerPackBuilder tspb = new ToServerPackBuilder(hsbuff, 0);
-            byte[] sendbuff = new byte[ToServerPackBuilder.HEADER_LEN + appdata.Length];
+            ServerPackBuilder tspb = new ServerPackBuilder(hsbuff, 0);
+            byte[] sendbuff = new byte[PackSettings.HEADER_LEN + appdata.Length];
             tspb.Write(sendbuff, appdata, 0, appdata.Length);
             udp.SendTo(sendbuff, remote_ipep);
             lastHandshakeTime = DateTime.Now;
@@ -177,7 +177,7 @@ namespace KcpClient
                 return;
             }
 
-            byte[] sendbuff = new byte[ToServerPackBuilder.HEADER_LEN + heartbeatData.Length];
+            byte[] sendbuff = new byte[PackSettings.HEADER_LEN + heartbeatData.Length];
             defpb.Write(sendbuff, heartbeatData, 0, heartbeatData.Length);
             udp.SendTo(sendbuff, remote_ipep);
             lastHartbeatTime = DateTime.Now;
@@ -206,7 +206,7 @@ namespace KcpClient
                             if (tmp > 0)
                             {
                                 this.SessionId = tmp;
-                                defpb = new ToServerPackBuilder(defpb.GetSysIdBuf(), this.SessionId);
+                                defpb = new ServerPackBuilder(defpb.GetSysIdBuf(), this.SessionId);
                                 debug?.Invoke($"{nameof(Handshake)}:{nameof(SessionId)}={SessionId}");
                                 OnHandShake();
 
@@ -237,7 +237,7 @@ namespace KcpClient
                 }
                 while (Outgoing != null && Outgoing.TryDequeue(out var sbuff))
                 {
-                    var sndbuf = new byte[ToServerPackBuilder.HEADER_LEN + sbuff.Length];
+                    var sndbuf = new byte[PackSettings.HEADER_LEN + sbuff.Length];
                     defpb.Write(sndbuf, sbuff, 0, sbuff.Length);
                     udp.SendTo(sndbuf, remote_ipep);
 #if PRINTPACK

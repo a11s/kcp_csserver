@@ -44,28 +44,28 @@
         
         private void button_init_Click(object sender, EventArgs e)
         {
-            if (client != null)
-            {
-                client.Close();
-            }
-            client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "kcppeer".ToCharArray().Select(a => (byte)a).ToArray());
-            var arr = textBox_remote.Text.Split(":"[0]);
-            remoteipep = new IPEndPoint(IPAddress.Parse(arr[0]), int.Parse(arr[1]));
-            client.OnOperationResponse = (buf) =>
+                if (client != null)
                 {
-                    Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(buf)} size:{buf.Length} ");
+                        client.Close();
+                }
+                client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "kcppeer".ToCharArray().Select(a => (byte)a).ToArray());
+                var arr = textBox_remote.Text.Split(":"[0]);
+                remoteipep = new IPEndPoint(IPAddress.Parse(arr[0]), int.Parse(arr[1]));
+                client.OnOperationResponse = (buf) =>
+                {
+                        Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(buf)} size:{buf.Length} ");
                 };
-            client.OnConnected = (sid) =>
-            {
-                this.Invoke(
-                    new Action(() =>
-                    {
-                        this.Text = sid.ToString();
-                    })
-                    );
+                client.OnConnected = (sid) =>
+                        {
+                        this.Invoke(
+                                new Action(() =>
+                                {
+                                        this.Text = sid.ToString();
+                                })
+                        );
 
-            };
-            client.Connect(remoteipep);
+                };
+                client.Connect(remoteipep);
         }
         
         

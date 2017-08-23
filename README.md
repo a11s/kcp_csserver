@@ -15,7 +15,7 @@
 2 更多的测试代码  
 3 性能测试以及优化一些无用的new和copy  
 
-## 用法
+### 用法 服务器端  
 
 
         public static void StartServer(IPEndPoint ipep)
@@ -37,7 +37,8 @@
             Server.Start(sc);
         }
         
-## 用法 客户端
+### 用法 客户端  
+
         
         private void button_init_Click(object sender, EventArgs e)
         {

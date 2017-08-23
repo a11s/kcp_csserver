@@ -24,7 +24,6 @@
             App = new TestApplicationLite();
             var sysid = "Test".ToCharArray().Select(a => (byte)a).ToArray();
             var appid = "App1".ToCharArray().Select(a => (byte)a).ToArray();
-
             var sc = KcpServer.Lite.ServerConfig.Create()
                 .SetSysId(sysid)
                 .SetApplicationData(appid)
@@ -36,6 +35,9 @@
                 ;
             Server.Start(sc);
         }
+        
+
+
         
 ### 用法 客户端  
 

@@ -21,12 +21,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestServer.LiteCore", "Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KcpServer.LiteCore", "KcpServer.LiteCore\KcpServer.LiteCore.csproj", "{11D5949D-844C-49DA-915D-CD51EB00FB16}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KcpClient.net35", "KcpClient.net35\KcpClient.net35.csproj", "{B766FBA2-B84E-4E12-95A2-7C9D7CDA60D5}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Utilities\Utilities.projitems*{14a27791-39a5-454d-b4dd-19c0cee73d01}*SharedItemsImports = 4
 		Utilities\Utilities.projitems*{16278a10-a238-41e5-ac2a-d9316489fa32}*SharedItemsImports = 4
 		Utilities\Utilities.projitems*{46ad2778-1c68-459f-8578-8739ada49b2b}*SharedItemsImports = 13
 		Utilities\Utilities.projitems*{a2a74321-0f1a-4fdd-8ea3-21c8f32ad730}*SharedItemsImports = 4
+		Utilities\Utilities.projitems*{b766fba2-b84e-4e12-95a2-7c9d7cda60d5}*SharedItemsImports = 4
 		Utilities\Utilities.projitems*{ce068426-1f28-4c19-bd70-81db22b1bca2}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -100,6 +103,14 @@ Global
 		{11D5949D-844C-49DA-915D-CD51EB00FB16}.Release|Any CPU.Build.0 = Release|Any CPU
 		{11D5949D-844C-49DA-915D-CD51EB00FB16}.Release|x64.ActiveCfg = Release|Any CPU
 		{11D5949D-844C-49DA-915D-CD51EB00FB16}.Release|x64.Build.0 = Release|Any CPU
+		{B766FBA2-B84E-4E12-95A2-7C9D7CDA60D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B766FBA2-B84E-4E12-95A2-7C9D7CDA60D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B766FBA2-B84E-4E12-95A2-7C9D7CDA60D5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B766FBA2-B84E-4E12-95A2-7C9D7CDA60D5}.Debug|x64.Build.0 = Debug|Any CPU
+		{B766FBA2-B84E-4E12-95A2-7C9D7CDA60D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B766FBA2-B84E-4E12-95A2-7C9D7CDA60D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B766FBA2-B84E-4E12-95A2-7C9D7CDA60D5}.Release|x64.ActiveCfg = Release|Any CPU
+		{B766FBA2-B84E-4E12-95A2-7C9D7CDA60D5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

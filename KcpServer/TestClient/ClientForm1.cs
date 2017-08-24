@@ -108,7 +108,7 @@ namespace TestClient
 
             };
 
-            client.Connect(remoteipep);
+            client.Connect(remoteipep,true);
         }
 
 

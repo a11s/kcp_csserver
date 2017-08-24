@@ -94,10 +94,7 @@ namespace KcpClient
         }
 
         static HashSet<int> IOThreads = new HashSet<int>();
-        public void Connect(string ip, int port)
-        {
-            Connect(new IPEndPoint(IPAddress.Parse(ip), port));
-        }
+
         #region IOControl
         const uint IOC_VOID = 0x20000000;/* no parameters */
         const uint IOC_OUT = 0x40000000; /* copy out parameters */
@@ -115,7 +112,12 @@ namespace KcpClient
         #endregion
         public bool Connected { get => _connected; private set => _connected = value; }
 
-        public void Connect(IPEndPoint ipep)
+        public void Connect(string ip, int port, bool CreateBackgroundThread)
+        {
+            Connect(new IPEndPoint(IPAddress.Parse(ip), port), CreateBackgroundThread);
+        }
+
+        public void Connect(IPEndPoint ipep, bool CreateBackgroundThread)
         {
             IOThreads.Clear();
             lastHandshakeTime = DateTime.MinValue;
@@ -128,14 +130,15 @@ namespace KcpClient
             defpb = new ServerPackBuilderEx(defpb.GetSysIdBuf(), SessionId);
             remote_ipep = ipep;
             udp.Connect(remote_ipep);
-            ioThread = new Thread(ioLoop);
-            ioThread.IsBackground = true;
-            ioThread.Name = $"{nameof(ioThread)}";
-            IOThreads.Add(ioThread.ManagedThreadId);
-            //Thread.SetData()
-            ioThread.Start();
+            if (CreateBackgroundThread)
+            {
+                ioThread = new Thread(ioLoop);
+                ioThread.IsBackground = true;
+                ioThread.Name = $"{nameof(ioThread)}";
+                IOThreads.Add(ioThread.ManagedThreadId);                
+                ioThread.Start();
+            }
             debug?.Invoke($"start connect");
-
         }
 
         public virtual void Close()
@@ -180,78 +183,83 @@ namespace KcpClient
             lastHartbeatTime = DateTime.Now;
         }
 
+        EndPoint remoteIpep = new IPEndPoint(0, 0);
         void ioLoop()
         {
             var tid = Thread.CurrentThread.ManagedThreadId;
             debug?.Invoke($"Thread {tid} start");
-            EndPoint ep = new IPEndPoint(0, 0);
             SpinWait sw = new SpinWait();
             while (IOThreads.Contains(tid))
             {
-                while (udp.Available > 0)
+                DoWork();
+                sw.SpinOnce();
+            }
+            debug?.Invoke($"Thread {tid} exit");
+        }
+
+        public void DoWork()
+        {
+            while (udp.Available > 0)
+            {
+                byte[] buff = new byte[udp.Available];
+                var cnt = udp.ReceiveFrom(buff, ref remoteIpep);
+                var datasize = defpb.Read(buff, out var data, out int sid, out var sysbuff);
+                if (datasize > 0)
                 {
-                    byte[] buff = new byte[udp.Available];
-                    var cnt = udp.ReceiveFrom(buff, ref ep);
-                    var datasize = defpb.Read(buff, out var data, out int sid, out var sysbuff);
-                    if (datasize > 0)
+                    //data arrival
+                    if (sid == 0)
                     {
-                        //data arrival
-                        if (sid == 0)
+                        //握手协议
+                        var tmp = BitConverter.ToInt32(data, 0);
+                        if (tmp > 0)
                         {
-                            //握手协议
-                            var tmp = BitConverter.ToInt32(data, 0);
-                            if (tmp > 0)
-                            {
-                                this.SessionId = tmp;
-                                defpb = new ServerPackBuilderEx(defpb.GetSysIdBuf(), this.SessionId);
-                                debug?.Invoke($"{nameof(Handshake)}:{nameof(SessionId)}={SessionId}");
-                                OnHandShake();
+                            this.SessionId = tmp;
+                            defpb = new ServerPackBuilderEx(defpb.GetSysIdBuf(), this.SessionId);
+                            debug?.Invoke($"{nameof(Handshake)}:{nameof(SessionId)}={SessionId}");
+                            OnHandShake();
 
-                            }
-                            else
-                            {
-                                //error code                                
-                                var errcode = BitConverter.ToInt32(data, 0);
-                                InternalError(errcode);
-
-                            }
                         }
                         else
                         {
-                            ProcessIncomingData(data, 0, data.Length);
+                            //error code                                
+                            var errcode = BitConverter.ToInt32(data, 0);
+                            InternalError(errcode);
 
                         }
                     }
-                    else if (datasize == 0)
-                    {
-                        //heartbeat from server, reserved
-                    }
                     else
                     {
-                        //error
-                        InternalError(datasize);
+                        ProcessIncomingData(data, 0, data.Length);
+
                     }
                 }
-                while (Outgoing != null && Outgoing.TryDequeue(out var sbuff))
+                else if (datasize == 0)
                 {
-                    var sndbuf = new byte[PackSettings.HEADER_LEN + sbuff.Length];
-                    defpb.Write(sndbuf, sbuff, 0, sbuff.Length);
-                    udp.SendTo(sndbuf, remote_ipep);
-#if PRINTPACK
-                    Console.WriteLine($"realsend:{sndbuf.Length}");
-#endif
-                }
-                sw.SpinOnce();
-                if (this.SessionId == 0)
-                {
-                    Handshake();
+                    //heartbeat from server, reserved
                 }
                 else
                 {
-                    Heartbeat();
+                    //error
+                    InternalError(datasize);
                 }
             }
-            debug?.Invoke($"Thread {tid} exit");
+            while (Outgoing != null && Outgoing.TryDequeue(out var sbuff))
+            {
+                var sndbuf = new byte[PackSettings.HEADER_LEN + sbuff.Length];
+                defpb.Write(sndbuf, sbuff, 0, sbuff.Length);
+                udp.SendTo(sndbuf, remote_ipep);
+#if PRINTPACK
+                    Console.WriteLine($"realsend:{sndbuf.Length}");
+#endif
+            }
+            if (this.SessionId == 0)
+            {
+                Handshake();
+            }
+            else
+            {
+                Heartbeat();
+            }
         }
 
         protected virtual void OnHandShake()

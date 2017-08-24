@@ -58,7 +58,7 @@ namespace TestClient
                     );
             };
 
-            client.Connect(remoteipep);
+            client.Connect(remoteipep, true);
         }
 
         private void button_close_Click(object sender, EventArgs e)

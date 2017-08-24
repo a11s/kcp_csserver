@@ -1,18 +1,49 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace System.Collections.Concurrent
 {
     public class ConcurrentQueue<T>
     {
-        public bool TryDequeue(out T ibuff)
+        Queue<T> innerQueue = null;
+        public ConcurrentQueue()
         {
-            throw new NotImplementedException();
+            innerQueue = new Queue<T>();
+        }
+        public bool TryDequeue(out T item)
+        {
+            lock (innerQueue)
+            {
+                if (innerQueue.Count > 0)
+                {
+                    item = innerQueue.Dequeue();
+                    return true;
+                }
+                else
+                {
+                    item = default(T);
+                    return false;
+                }
+            }
         }
 
-        public void Enqueue(T data)
+        public void Enqueue(T item)
         {
-            throw new NotImplementedException();
+            lock (innerQueue)
+            {
+                innerQueue.Enqueue(item);
+            }
         }
-        public int Count { get => 0; }
+        public int Count
+        {
+            get
+            {
+
+                lock (innerQueue)
+                {
+                    return innerQueue.Count;
+                };
+            }
+        }
     }
 }

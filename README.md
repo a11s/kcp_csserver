@@ -10,10 +10,10 @@
 7 支持dotnet core 2.0 Ubuntu下测试通过  
 8 提供了可靠数据包跟不可靠数据包两种传输方式
 9 整理了测试项目，阅读起来更方便了  
-## 计划内的尚未完成的工作   
-1 unity3d用的Client版本(mono是个坑,)  
-2 更多的测试代码  
-3 性能测试以及优化一些无用的new和copy  
+10 unity3d用的Client版本可以用了  
+## 计划内的尚未完成的工作    
+ 更多的测试代码  
+ 性能测试以及优化一些无用的new和copy  
 
 ### 用法 服务器端  
 
@@ -73,4 +73,5 @@
 ## 测试图 
 <img src='https://github.com/a11s/kcp_csserver/raw/master/KcpServer/TestClient/Images/kcpserver.png'/>  
 <img src='https://github.com/a11s/kcp_csserver/raw/master/KcpServer/TestClient/Images/ubuntu.png'/>  
+<img src='https://github.com/a11s/kcp_csserver/raw/master/KcpServer/TestClient/Images/u3dclient.png'/>  
 

@@ -57,6 +57,7 @@
     <None Include="kcplib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="package.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kcplib.pdb">

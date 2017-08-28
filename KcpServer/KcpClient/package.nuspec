@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <!--*-->
+    <id>$id$</id>
+    <!--*-->
+    <version>0.1.1.7</version>
+    <title>
+    </title>
+    <!--*-->
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <!--
+    <licenseUrl></licenseUrl>
+    <projectUrl></projectUrl>
+    <iconUrl></iconUrl>
+-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <!--*-->
+    <description>$description$</description>
+    <!--*-->
+    <releaseNotes>do&amp;#x0020;not&amp;#x0020;use&amp;#x0020;it&amp;#x0020;before&amp;#x0020;1.0</releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags>
+    </tags>
+    <dependencies>
+    </dependencies>
+  </metadata>
+</package>

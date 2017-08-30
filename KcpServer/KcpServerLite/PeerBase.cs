@@ -122,5 +122,18 @@ namespace KcpServer.Lite
             defpb.Write(sendbuf, data, 0, data.Length);
             OutgoingData.Enqueue(sendbuf);
         }
+
+        public virtual void Close()
+        {
+            this.Context.ConnectionManager.RemoveConn(this);
+        }
+        bool _connected = true;
+        public virtual bool Connected
+        {
+            get
+            {
+                return _connected;
+            }
+        }
     }
 }

@@ -20,6 +20,8 @@ namespace KcpServer
         public ThreadPoolFiber Fiber { get => _fiber; /*set => _Fiber = value;*/ }
         public IChannel Channel { get; internal set; }
 
+
+
         protected ConcurrentQueue<byte[]> IncomingData = new ConcurrentQueue<byte[]>();
         protected ConcurrentQueue<byte[]> OutgoingData = new ConcurrentQueue<byte[]>();
 
@@ -28,7 +30,7 @@ namespace KcpServer
 
         public virtual void OnDisconnect(DateTime lastPackTime, TimeSpan t)
         {
-            //do nothing
+            _connected = false;
             Console.WriteLine("connection timeout");
         }
         internal void OnTimeout(DateTime lastPackTime, TimeSpan t)
@@ -106,6 +108,19 @@ namespace KcpServer
             var sendbuf = new byte[PackSettings.HEADER_LEN + data.Length];
             defpb.Write(sendbuf, data, 0, data.Length);
             OutgoingData.Enqueue(sendbuf);
+        }
+
+        public virtual void Close()
+        {
+            this.Context.ConnectionManager.RemoveConn(this);
+        }
+        bool _connected = true;
+        public virtual bool Connected
+        {
+            get
+            {
+                return _connected;
+            }
         }
     }
 }

@@ -71,6 +71,7 @@ namespace KcpServer
         List<int> removelist = null;
         internal void CheckTimeout()
         {
+            RemoveCloseRequests();
             foreach (var item in ConnDict)
             {
                 var t = DateTime.Now.Subtract(item.Value.LastPackTime);
@@ -115,6 +116,24 @@ namespace KcpServer
                 }
                 removelist.Clear();
                 removelist = null;
+            }
+        }
+
+        ConcurrentQueue<int> CloseRequestQueue = new ConcurrentQueue<int>();
+        internal void RemoveConn(PeerBase peerBase)
+        {
+            CloseRequestQueue.Enqueue(peerBase.SessionId);
+        }
+
+        private void RemoveCloseRequests()
+        {
+            while (CloseRequestQueue.TryDequeue(out int sid))
+            {
+                if (ConnDict.TryGetValue(sid, out var p))
+                {
+                    RecycleSession(p.SessionId);//归还
+                    p.OnTimeout(DateTime.MinValue, TimeSpan.MinValue);
+                }
             }
         }
 

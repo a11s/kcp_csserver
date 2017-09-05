@@ -135,8 +135,8 @@ namespace KcpClient
         }
         protected override void OnHandShake()
         {
-            base.OnHandShake();
             initKcp();
+            base.OnHandShake();
         }
         public override void Close()
         {

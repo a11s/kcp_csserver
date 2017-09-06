@@ -12,11 +12,18 @@ namespace KcpServer.Lite
 {
     public unsafe abstract class KcpPeerBase : PeerBase
     {
-        k.IKCPCB* kcp = null;
+        k.IKCPCB* kcp
+        {
+            get
+            {
+                return pc.EncoderData;
+            }
+        }
         k.d_output realsend;
+        PeerContext pc;
         public KcpPeerBase(PeerContext pc) : base(pc)
         {
-            kcp = pc.EncoderData;
+            this.pc = pc;
             //kcp create放在这里比较合适
             if (kcp == null)
             {
@@ -51,6 +58,7 @@ namespace KcpServer.Lite
 
         protected override void BeforeSendOutgoing(byte[] data)
         {
+            if (kcp == null) return;
             fixed (byte* b = &data[0])
             {
                 ikcp_send(this.Context.EncoderData, b, data.Length);
@@ -59,6 +67,7 @@ namespace KcpServer.Lite
         byte[] recbuf = new byte[Utilities.PackSettings.MAX_RECBUFF_LEN];
         protected override void DeriverUpdate()
         {
+            if (kcp == null) return;
             fixed (byte* b = &recbuf[0])
             {
                 int kcnt = 0;

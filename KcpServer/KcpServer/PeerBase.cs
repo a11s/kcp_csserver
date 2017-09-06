@@ -31,7 +31,9 @@ namespace KcpServer
         public virtual void OnDisconnect(DateTime lastPackTime, TimeSpan t)
         {
             _connected = false;
+#if DEBUG
             Console.WriteLine("connection timeout");
+#endif
         }
         internal void OnTimeout(DateTime lastPackTime, TimeSpan t)
         {
@@ -62,6 +64,7 @@ namespace KcpServer
         /// <returns></returns>
         public virtual void SendOperationResponse(byte[] data)
         {
+            //udp 就是要send
             BeforeSendOutgoing(data);
         }
 
@@ -104,7 +107,7 @@ namespace KcpServer
         }
 
         protected virtual void BeforeSendOutgoing(byte[] data)
-        {
+        {            
             var sendbuf = new byte[PackSettings.HEADER_LEN + data.Length];
             defpb.Write(sendbuf, data, 0, data.Length);
             OutgoingData.Enqueue(sendbuf);
@@ -114,7 +117,7 @@ namespace KcpServer
         {
             this.Context.ConnectionManager.RemoveConn(this);
         }
-        bool _connected = true;
+        protected bool _connected = true;
         public virtual bool Connected
         {
             get

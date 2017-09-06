@@ -26,7 +26,7 @@ namespace KcpServer.Lite
 
         public virtual void OnDisconnect(DateTime lastPackTime, TimeSpan t)
         {
-            //do nothing
+            _connected = false;
 #if DEBUG
             Console.WriteLine("connection timeout");
 #endif
@@ -61,6 +61,7 @@ namespace KcpServer.Lite
         /// <returns></returns>
         public virtual void SendOperationResponse(byte[] data)
         {
+            //udp 就是要send
             BeforeSendOutgoing(data);
 
         }
@@ -127,7 +128,7 @@ namespace KcpServer.Lite
         {
             this.Context.ConnectionManager.RemoveConn(this);
         }
-        bool _connected = true;
+        protected bool _connected = true;
         public virtual bool Connected
         {
             get

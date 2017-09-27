@@ -29,6 +29,7 @@
     <Compile Include="..\KcpServerLite\SendChannel.cs" Link="SendChannel.cs" />
     <Compile Include="..\KcpServerLite\ServerConfig.cs" Link="ServerConfig.cs" />
     <Compile Include="..\KcpServerLite\UdpServerLite.cs" Link="UdpServerLite.cs" />
+    <Compile Include="..\KcpServer\KcpSetting.cs" Link="KcpSetting.cs" />
   </ItemGroup>
 
   <ItemGroup>

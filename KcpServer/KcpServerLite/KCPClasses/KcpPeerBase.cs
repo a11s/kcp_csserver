@@ -86,6 +86,13 @@ namespace KcpServer.Lite
             ikcp_update(kcp, (uint)Environment.TickCount);
         }
 
-
+        public void KcpFlush()
+        {
+            if (kcp==null)
+            {
+                return;
+            }
+            ikcp_flush(kcp);
+        }
     }
 }

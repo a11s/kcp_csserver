@@ -53,6 +53,9 @@
     <Compile Include="..\KcpClient\KcpClientEx.cs">
       <Link>KcpClientEx.cs</Link>
     </Compile>
+    <Compile Include="..\KcpClient\KcpSetting.cs">
+      <Link>KcpSetting.cs</Link>
+    </Compile>
     <Compile Include="..\KcpClient\UdpClient.cs">
       <Link>UdpClient.cs</Link>
     </Compile>

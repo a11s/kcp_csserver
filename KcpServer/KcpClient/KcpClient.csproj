@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="KcpClient.cs" />
     <Compile Include="KcpClientEx.cs" />
+    <Compile Include="KcpSetting.cs" />
     <Compile Include="UdpClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

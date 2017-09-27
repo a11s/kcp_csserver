@@ -176,6 +176,7 @@
     <Compile Include="KCPClasses\KcpServer.cs" />
     <Compile Include="KCPClasses\KcpServerHandler.cs" />
     <Compile Include="KCPClasses\KcpPeerBase.cs" />
+    <Compile Include="KcpSetting.cs" />
     <Compile Include="UdpServer.cs" />
     <Compile Include="PeerBase.cs" />
     <Compile Include="PeerContext.cs" />

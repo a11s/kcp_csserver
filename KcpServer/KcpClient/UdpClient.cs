@@ -135,7 +135,7 @@ namespace KcpClient
                 ioThread = new Thread(ioLoop);
                 ioThread.IsBackground = true;
                 ioThread.Name = $"{nameof(ioThread)}";
-                IOThreads.Add(ioThread.ManagedThreadId);                
+                IOThreads.Add(ioThread.ManagedThreadId);
                 ioThread.Start();
             }
             debug?.Invoke($"start connect");
@@ -171,7 +171,10 @@ namespace KcpClient
         DateTime lastHartbeatTime = DateTime.Now;
         protected void Heartbeat()
         {
-
+            if (!Connected)
+            {
+                return;
+            }
             if (DateTime.Now.Subtract(lastHartbeatTime).TotalSeconds < 1)
             {
                 return;
@@ -199,7 +202,7 @@ namespace KcpClient
 
         public void DoWork()
         {
-            while (udp.Available > 0)
+            while (Incoming != null && udp.Available > 0)
             {
                 byte[] buff = new byte[udp.Available];
                 var cnt = udp.ReceiveFrom(buff, ref remoteIpep);

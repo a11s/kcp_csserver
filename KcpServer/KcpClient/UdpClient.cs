@@ -124,9 +124,12 @@ namespace KcpClient
             Incoming = new ConcurrentQueue<byte[]>();
             Outgoing = new ConcurrentQueue<byte[]>();
             udp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            bool bNewBehavior = false;
-            byte[] dwBytesReturned = new byte[4];
-            udp.IOControl((int)SIO_UDP_CONNRESET, BitConverter.GetBytes(bNewBehavior), dwBytesReturned);
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                bool bNewBehavior = false;
+                byte[] dwBytesReturned = new byte[4];
+                udp.IOControl((int)SIO_UDP_CONNRESET, BitConverter.GetBytes(bNewBehavior), dwBytesReturned);
+            }
             defpb = new ServerPackBuilderEx(defpb.GetSysIdBuf(), SessionId);
             remote_ipep = ipep;
             udp.Connect(remote_ipep);

@@ -59,8 +59,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\KcpServerLite\kcplib.dll" Link="kcplib.dll" />
-    <None Include="..\KcpServerLite\kcplib.pdb" Link="kcplib.pdb" />
+    <None Include="..\KcpServer\libikcp.dll" Link="libikcp.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\KcpServer\libikcp.pdb" Link="libikcp.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Import Project="..\Utilities\Utilities.projitems" Label="Shared" />

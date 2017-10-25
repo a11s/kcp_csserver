@@ -66,17 +66,21 @@
     <Compile Include="UdpServerLite.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="kcplib.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="..\KcpServer\kcpwarpper.dll">
+      <Link>kcpwarpper.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="kcplib.pdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="..\KcpServer\kcpwarpper.pdb">
+      <Link>kcpwarpper.pdb</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="kcpwarpper.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="..\KcpServer\libikcp.dll">
+      <Link>libikcp.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="kcpwarpper.pdb">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="..\KcpServer\libikcp.pdb">
+      <Link>libikcp.pdb</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Import Project="..\Utilities\Utilities.projitems" Label="Shared" />

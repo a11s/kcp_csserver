@@ -10,7 +10,7 @@ namespace KcpServer.Lite
 {
     public class SendChannel
     {
-        private Socket sock=null;
+        private Socket sock = null;
         public SendChannel(Socket udp)
         {
             sock = udp;
@@ -19,5 +19,6 @@ namespace KcpServer.Lite
         {
             sock.SendTo(sendbuf, remoteEP);
         }
+        internal bool CanSend => sock?.Poll(0, SelectMode.SelectWrite) == true;
     }
 }

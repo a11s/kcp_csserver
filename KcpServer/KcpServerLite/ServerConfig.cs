@@ -13,17 +13,20 @@ namespace KcpServer.Lite
         private byte[] _appId;
         private ApplicationBase _app;
         private TimeSpan _timeout;
-        
+
         private IPEndPoint _localipep;
         private int _maxPlayer = 20;
+
+        private bool _blocking = false;
 
         public byte[] SysId { get => _sysId;/* set => sysId = value;*/ }
         public byte[] AppId { get => _appId; /*set => _appId = value;*/ }
         public ApplicationBase App { get => _app; /*set => _app = value;*/ }
         public TimeSpan Timeout { get => _timeout; /*set => _timeout = value;*/ }
-        
+
         public IPEndPoint Localipep { get => _localipep; /*set => _localipep = value;*/ }
         internal int MaxPlayer { get => _maxPlayer; /*set => maxPlayer = value; */}
+        public bool Blocking { get => _blocking; }
 
         public ServerConfig SetSysId(byte[] _4BytesId)
         {
@@ -66,6 +69,11 @@ namespace KcpServer.Lite
         public ServerConfig SetMaxPlayer(int maxplayer)
         {
             this._maxPlayer = maxplayer;
+            return this;
+        }
+        public ServerConfig SetBlocking(bool blocking)
+        {
+            this._blocking = blocking;
             return this;
         }
 

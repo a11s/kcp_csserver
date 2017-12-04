@@ -70,6 +70,7 @@ namespace TestServer.Lite
                 //.SetFiberPool(new Utilities.FiberPool(8))
                 .SetLocalIpep(ipep)
                 .SetMaxPlayer(8)
+                .SetBlocking(true)
                 ;
             Server.Start(sc);
             

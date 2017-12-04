@@ -94,7 +94,7 @@ namespace KcpServer.Lite
             }
             #endregion
 
-            while (OutgoingData.Count > 0)
+            while (this.Channel.CanSend && OutgoingData.Count > 0)
             {
                 var buf2 = OutgoingData.Dequeue();
 #if PRINTPACK

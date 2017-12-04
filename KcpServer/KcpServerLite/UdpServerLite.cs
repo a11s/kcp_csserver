@@ -37,7 +37,7 @@ namespace KcpServer.Lite
                 .SetSysId(sc.SysId)
                 .SetApplicationData(sc.AppId)
                 .BindApplication(sc.App)
-                .SetTimeout(sc.Timeout)
+                .SetTimeout(sc.Timeout)                
                 ;
             defpb = new ServerPackBuilderEx(cm._SysId, 0);
             connMan = cm;
@@ -79,7 +79,7 @@ namespace KcpServer.Lite
                 byte[] dwBytesReturned = new byte[4];
                 udp.IOControl((int)SIO_UDP_CONNRESET, BitConverter.GetBytes(bNewBehavior), dwBytesReturned);
             }
-            udp.Blocking = false;
+            udp.Blocking = sc.Blocking;
             udp.Bind(sc.Localipep);
             DebugLog($"udp socket inited {udp.LocalEndPoint}");
             return udp;

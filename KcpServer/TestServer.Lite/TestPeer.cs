@@ -22,6 +22,19 @@ namespace TestServer.Lite
             Console.WriteLine($"sid:{this.SessionId}->rec:{i} snd:{snd}");
         }
     }
+
+    class TestUdpPeer2 : PeerBase
+    {
+        public TestUdpPeer2(PeerContext pc) : base(pc)
+        {
+            Console.WriteLine($"{nameof(TestUdpPeer2)} sid:{pc.SessionId} created");
+        }
+
+        public override void OnOperationRequest(byte[] data)
+        {
+            this.SendOperationResponse(data);
+        }
+    }
     public class BigBuffPeer : KcpPeerBase
     {
         public BigBuffPeer(PeerContext pc) : base(pc)
@@ -37,6 +50,25 @@ namespace TestServer.Lite
         }
     }
 
+    public class BigBuffPeerFlush : KcpPeerBase
+    {
+        public BigBuffPeerFlush(PeerContext pc) : base(pc)
+        {
+            Console.WriteLine($"{nameof(BigBuffPeerFlush)} sid:{pc.SessionId} created");
+        }
+
+        public override void OnOperationRequest(byte[] data)
+        {
+            if (data.Length > sizeof(UInt64))
+            {
+                Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(data)} size:{data.Length}");
+            }
+
+            //send back to client
+            SendOperationResponse(data);
+            KcpFlush();
+        }
+    }
     public class ExPeer : KcpPeerEx
     {
         public ExPeer(PeerContext pc) : base(pc)

@@ -9,19 +9,33 @@ namespace TestServer
 {
     static class Program
     {
+        static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        static DateTime lasttime;
+        static long counter = 0;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
+            sw.Start();
+            lasttime = DateTime.Now;
+            for (int i = 0; i < 100000; i++)
+            {
+                if (DateTime.Now.Subtract(lasttime).TotalMilliseconds>1000)
+                {
+                    lasttime = DateTime.Now;
+
+                }
+            }
             Console.WriteLine("All test:");
             Console.WriteLine("1 PureUdp test");
             Console.WriteLine("2 PureKcp test");
             Console.WriteLine("3 Udp+Kcp mix test");
+            Console.WriteLine("4 PureKcp withflush minrto test");
             Console.WriteLine("other: exit");
             string input = "";
-            Console.WriteLine("input 1~3:");
+            Console.WriteLine("input 1~4:");
             input = Console.ReadLine();
             switch (input.Trim())
             {
@@ -36,6 +50,9 @@ namespace TestServer
                     break;
                 case "3":
                     StartServer = StartServer3;
+                    break;
+                case "4":
+                    StartServer = StartServer4;
                     break;
                 default:
                     return;
@@ -130,6 +147,33 @@ namespace TestServer
             var t = Server.AsyncStart(sc);
             t.Wait();
         }
+        public static void StartServer4(IPEndPoint ipep)
+        {
+            KcpServer.KcpSetting.Default.RTO = 1;
+            KcpServer.KcpSetting.Default.NoDelay = 1;
+            KcpServer.KcpSetting.Default.NoDelayInterval = 1;
+            KcpServer.KcpSetting.Default.NoDelayResend = 10;
+            KcpServer.KcpSetting.Default.NoDelayNC = 1;
+            KcpServer.KcpSetting.Default.RecWindowSize = 2048;
+            KcpServer.KcpSetting.Default.SndWindowSize = 2048;
+            Server = new KcpServer.KcpServer();
+            App = new TestApplication();
+            var sysid = "Test".ToCharArray().Select(a => (byte)a).ToArray();
+            var appid = "App1".ToCharArray().Select(a => (byte)a).ToArray();
+
+            var sc = KcpServer.ServerConfig.Create()
+                .SetSysId(sysid)
+                .SetApplicationData(appid)
+                .BindApplication(Program.App)
+                .SetTimeout(TimeSpan.FromSeconds(10))
+                .SetFiberPool(new Utilities.FiberPool(8))
+                .SetLocalIpep(ipep)
+                .SetMaxPlayer(8)
+                ;
+            var t = Server.AsyncStart(sc);
+            t.Wait();
+        }
+
         public static KcpServer.UdpServer Server;
         public static TestApplication App;
     }

@@ -35,11 +35,14 @@
             this.label2 = new System.Windows.Forms.Label();
             this.button_init = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.button_pingpong_init = new System.Windows.Forms.Button();
+            this.button_pingpong_loop = new System.Windows.Forms.Button();
+            this.checkBox_withflush = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // button_close
             // 
-            this.button_close.Location = new System.Drawing.Point(190, 66);
+            this.button_close.Location = new System.Drawing.Point(12, 124);
             this.button_close.Name = "button_close";
             this.button_close.Size = new System.Drawing.Size(75, 23);
             this.button_close.TabIndex = 38;
@@ -49,7 +52,7 @@
             // 
             // button_Send
             // 
-            this.button_Send.Location = new System.Drawing.Point(12, 111);
+            this.button_Send.Location = new System.Drawing.Point(13, 95);
             this.button_Send.Name = "button_Send";
             this.button_Send.Size = new System.Drawing.Size(75, 23);
             this.button_Send.TabIndex = 37;
@@ -90,11 +93,46 @@
             this.timer1.Interval = 10;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // button_pingpong_init
+            // 
+            this.button_pingpong_init.Location = new System.Drawing.Point(167, 66);
+            this.button_pingpong_init.Name = "button_pingpong_init";
+            this.button_pingpong_init.Size = new System.Drawing.Size(142, 23);
+            this.button_pingpong_init.TabIndex = 39;
+            this.button_pingpong_init.Text = "PingPongInit";
+            this.button_pingpong_init.UseVisualStyleBackColor = true;
+            this.button_pingpong_init.Click += new System.EventHandler(this.button_pingpong_init_Click);
+            // 
+            // button_pingpong_loop
+            // 
+            this.button_pingpong_loop.Location = new System.Drawing.Point(167, 95);
+            this.button_pingpong_loop.Name = "button_pingpong_loop";
+            this.button_pingpong_loop.Size = new System.Drawing.Size(142, 23);
+            this.button_pingpong_loop.TabIndex = 40;
+            this.button_pingpong_loop.Text = "PingPongLoop";
+            this.button_pingpong_loop.UseVisualStyleBackColor = true;
+            this.button_pingpong_loop.Click += new System.EventHandler(this.button_pingpong_loop_Click);
+            // 
+            // checkBox_withflush
+            // 
+            this.checkBox_withflush.AutoSize = true;
+            this.checkBox_withflush.Checked = true;
+            this.checkBox_withflush.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_withflush.Location = new System.Drawing.Point(231, 128);
+            this.checkBox_withflush.Name = "checkBox_withflush";
+            this.checkBox_withflush.Size = new System.Drawing.Size(84, 16);
+            this.checkBox_withflush.TabIndex = 41;
+            this.checkBox_withflush.Text = "With flush";
+            this.checkBox_withflush.UseVisualStyleBackColor = true;
+            // 
             // ClientKcp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(321, 174);
+            this.Controls.Add(this.checkBox_withflush);
+            this.Controls.Add(this.button_pingpong_loop);
+            this.Controls.Add(this.button_pingpong_init);
             this.Controls.Add(this.button_close);
             this.Controls.Add(this.button_Send);
             this.Controls.Add(this.textBox_remote);
@@ -115,5 +153,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button_init;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Button button_pingpong_init;
+        private System.Windows.Forms.Button button_pingpong_loop;
+        private System.Windows.Forms.CheckBox checkBox_withflush;
     }
 }

@@ -20,6 +20,7 @@ namespace TestServer.Lite
             Console.WriteLine("1 PureUdp test");
             Console.WriteLine("2 PureKcp test");
             Console.WriteLine("3 Udp+Kcp mix test");
+            Console.WriteLine("4 PureKcp withflush minrto mix test");
             Console.WriteLine("other: exit");
             string input = "";
             Console.WriteLine("input 1~3:");
@@ -37,6 +38,9 @@ namespace TestServer.Lite
                     break;
                 case "3":
                     StartServer = StartServer3;
+                    break;
+                case "4":
+                    StartServer = StartServer4;
                     break;
                 default:
                     return;
@@ -126,6 +130,32 @@ namespace TestServer.Lite
                 .BindApplication(Program.App)
                 .SetTimeout(TimeSpan.FromSeconds(10))
                 //.SetFiberPool(new Utilities.FiberPool(8))
+                .SetLocalIpep(ipep)
+                .SetMaxPlayer(8)
+                ;
+            Server.Start(sc);
+            
+        }
+        public static void StartServer4(IPEndPoint ipep)
+        {
+            KcpServer.KcpSetting.Default.RTO = 1;
+            KcpServer.KcpSetting.Default.NoDelay = 1;
+            KcpServer.KcpSetting.Default.NoDelayInterval = 1;
+            KcpServer.KcpSetting.Default.NoDelayResend = 10;
+            KcpServer.KcpSetting.Default.NoDelayNC = 1;
+            KcpServer.KcpSetting.Default.RecWindowSize = 2048;
+            KcpServer.KcpSetting.Default.SndWindowSize = 2048;
+            Server = new UdpServerLite();
+            App = new TestApplication();
+            var sysid = "Test".ToCharArray().Select(a => (byte)a).ToArray();
+            var appid = "App1".ToCharArray().Select(a => (byte)a).ToArray();
+
+            var sc = ServerConfig.Create()
+                .SetSysId(sysid)
+                .SetApplicationData(appid)
+                .BindApplication(Program.App)
+                .SetTimeout(TimeSpan.FromSeconds(10))
+                
                 .SetLocalIpep(ipep)
                 .SetMaxPlayer(8)
                 ;

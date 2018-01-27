@@ -22,6 +22,19 @@ namespace TestServer
             Console.WriteLine($"sid:{this.SessionId}->rec:{i} snd:{snd}");
         }
     }
+    class TestUdpPeer2 : KcpServer.PeerBase
+    {
+        public TestUdpPeer2(PeerContext pc) : base(pc)
+        {
+            Console.WriteLine($"{nameof(TestUdpPeer2)} sid:{pc.SessionId} created");
+        }
+
+        public override void OnOperationRequest(byte[] data)
+        {           
+            this.SendOperationResponse(data);           
+        }
+    }
+
     public class BigBuffPeer : KcpServer.KcpPeerBase
     {
         public BigBuffPeer(PeerContext pc) : base(pc)
@@ -31,9 +44,33 @@ namespace TestServer
 
         public override void OnOperationRequest(byte[] data)
         {
-            Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(data)} size:{data.Length}");
+            if (data.Length > sizeof(UInt64))
+            {
+                Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(data)} size:{data.Length}");
+            }
+
+            //send back to client
+            SendOperationResponse(data);            
+        }
+    }
+
+    public class BigBuffPeerFlush : KcpServer.KcpPeerBase
+    {
+        public BigBuffPeerFlush(PeerContext pc) : base(pc)
+        {
+            Console.WriteLine($"{nameof(BigBuffPeerFlush)} sid:{pc.SessionId} created");
+        }
+
+        public override void OnOperationRequest(byte[] data)
+        {
+            if (data.Length > sizeof(UInt64))
+            {
+                Console.WriteLine($"{nameof(CheckBigBBuff)}={CheckBigBBuff(data)} size:{data.Length}");
+            }
+
             //send back to client
             SendOperationResponse(data);
+            KcpFlush();
         }
     }
 
@@ -47,11 +84,11 @@ namespace TestServer
         public override void OnOperationRequest(byte[] data)
         {
             //貌似这里不知道是不是非可靠消息传递过来的，没有暴露到接口层面。不过貌似意义不大，反正收到了指令，在乎这个指令是怎么来的吗？
-            if (data.Length==sizeof(UInt64))
+            if (data.Length == sizeof(UInt64))
             {
                 var i = BitConverter.ToInt64(data, 0);
                 var snd = i + 1;
-                this.SendOperationResponse(BitConverter.GetBytes(snd),true);
+                this.SendOperationResponse(BitConverter.GetBytes(snd), true);
                 Console.WriteLine($"sid:{this.SessionId}->rec:{i} snd:{snd}");
             }
             else

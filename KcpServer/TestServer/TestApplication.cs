@@ -24,6 +24,10 @@ namespace TestServer
             {
                 return new ExPeer(peerContext);
             }
+            else if (peertype == "kcppeerflush")
+            {
+                return new BigBuffPeerFlush(peerContext);
+            }
             else
             {
                 Console.WriteLine($"NotImplementedPeer");

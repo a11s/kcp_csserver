@@ -11,6 +11,7 @@
 8 提供了可靠数据包跟不可靠数据包两种传输方式
 9 整理了测试项目，阅读起来更方便了  
 10 unity3d用的Client版本可以用了,安卓x64环境下测试通过  
+11 新的测试4,大约每秒2W左右.用的WinForm的Timer,防止跨线程问题.
 ## 计划内的尚未完成的工作    
  更多的测试代码  
  性能测试以及优化一些无用的new和copy  
@@ -68,7 +69,12 @@
                 client.Connect(remoteipep);
         }
         
-        
+## 注意事项
+1 如果真的需要即时的发出数据,那么需要使用client的flush方法.否则你总会有那么一个小延迟
+2 kcp方法调用是不支持多线程的,如果你使用了flush,那么请不要用后台线程去DoWork().否则不安全.
+3 即便你都是单线程的,也不能无脑的while true去发,这样会把缓冲区爆掉.需要在恰当的时机去看一下waitsnd的值.毕竟带宽不是无限的.
+4 开一个客户端的时候,你的pingpong测试数据可能只有32qps 或者64qps.原因是这种测试正好命中了最糟糕的情况.因为消息的执行并不是收到后立刻执行的,在服务器收到数据以后,先堆积到线程池,每个worker在没有任务的时候会有一个短暂的SpinOnce(),于是这种测试正好全部命中SpinOnce(),这里如果觉得每个用户32qps不够用,就需要修改任务调度这部分.
+5 一定要熟悉kcp的参数设置.要理解每个参数的意义.
 
 ## 测试图 
 <img src='https://github.com/a11s/kcp_csserver/raw/master/KcpServer/TestClient/Images/kcpserver.png'/>  

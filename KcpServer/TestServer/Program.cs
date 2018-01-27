@@ -12,22 +12,27 @@ namespace TestServer
         static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         static DateTime lasttime;
         static long counter = 0;
+        static long counter2 = 0;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            sw.Start();
-            lasttime = DateTime.Now;
-            for (int i = 0; i < 100000; i++)
-            {
-                if (DateTime.Now.Subtract(lasttime).TotalMilliseconds>1000)
-                {
-                    lasttime = DateTime.Now;
-
-                }
-            }
+            //sw.Start();
+            //lasttime = DateTime.Now;
+            //System.Threading.SpinWait wait = new System.Threading.SpinWait();
+            //for (int i = 0; i < 100000; i++)
+            //{
+            //    if (DateTime.Now.Subtract(lasttime).TotalMilliseconds > 1000)
+            //    {
+            //        lasttime = DateTime.Now;
+            //        Console.WriteLine($"{sw.ElapsedMilliseconds}\t {counter - counter2}\t {counter}");
+            //        counter2 = counter;
+            //    }
+            //    wait.SpinOnce();
+            //    counter++;
+            //}
             Console.WriteLine("All test:");
             Console.WriteLine("1 PureUdp test");
             Console.WriteLine("2 PureKcp test");
@@ -154,8 +159,11 @@ namespace TestServer
             KcpServer.KcpSetting.Default.NoDelayInterval = 1;
             KcpServer.KcpSetting.Default.NoDelayResend = 10;
             KcpServer.KcpSetting.Default.NoDelayNC = 1;
-            KcpServer.KcpSetting.Default.RecWindowSize = 2048;
-            KcpServer.KcpSetting.Default.SndWindowSize = 2048;
+            KcpServer.KcpSetting.Default.RecWindowSize = 1024;
+            KcpServer.KcpSetting.Default.SndWindowSize = 1024;
+            KcpServer.KcpSetting.Default.MTU = Utilities.PackSettings.MAX_DATA_LEN;
+
+
             Server = new KcpServer.KcpServer();
             App = new TestApplication();
             var sysid = "Test".ToCharArray().Select(a => (byte)a).ToArray();

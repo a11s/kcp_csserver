@@ -114,6 +114,7 @@
     <ProjectReference Include="..\KcpClient\KcpClient.csproj">
       <Project>{a2a74321-0f1a-4fdd-8ea3-21c8f32ad730}</Project>
       <Name>KcpClient</Name>
+      <Aliases>globalclient</Aliases>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

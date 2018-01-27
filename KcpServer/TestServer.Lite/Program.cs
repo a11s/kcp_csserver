@@ -143,8 +143,9 @@ namespace TestServer.Lite
             KcpServer.KcpSetting.Default.NoDelayInterval = 1;
             KcpServer.KcpSetting.Default.NoDelayResend = 10;
             KcpServer.KcpSetting.Default.NoDelayNC = 1;
-            KcpServer.KcpSetting.Default.RecWindowSize = 2048;
-            KcpServer.KcpSetting.Default.SndWindowSize = 2048;
+            KcpServer.KcpSetting.Default.RecWindowSize = 1024;
+            KcpServer.KcpSetting.Default.SndWindowSize = 1024;
+            KcpServer.KcpSetting.Default.MTU = Utilities.PackSettings.MAX_DATA_LEN;
             Server = new UdpServerLite();
             App = new TestApplication();
             var sysid = "Test".ToCharArray().Select(a => (byte)a).ToArray();

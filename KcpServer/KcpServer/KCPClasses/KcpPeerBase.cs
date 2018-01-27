@@ -94,5 +94,17 @@ namespace KcpServer
             }
             ikcp_flush(kcp);
         }
+
+        public int WaitSend
+        {
+            get
+            {
+                if (kcp != null)
+                {
+                    return ikcp_waitsnd(kcp);
+                }
+                return -1;
+            }
+        }
     }
 }

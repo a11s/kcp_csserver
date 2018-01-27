@@ -1,4 +1,7 @@
-﻿using System;
+﻿extern alias globalclient;
+
+using globalclient::KcpClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,13 +45,14 @@ namespace TestClient
                     form = new ClientMix();
                     break;
                 case "4":                    
-                    KcpClient.KcpSetting.Default.RTO = 1;
-                    KcpClient.KcpSetting.Default.NoDelay = 1;
-                    KcpClient.KcpSetting.Default.NoDelayInterval = 1;
-                    KcpClient.KcpSetting.Default.NoDelayResend = 10;
-                    KcpClient.KcpSetting.Default.NoDelayNC = 1;
-                    KcpClient.KcpSetting.Default.SndWindowSize = 2048;
-                    KcpClient.KcpSetting.Default.RecWindowSize = 2048;
+                    KcpSetting.Default.RTO = 1;
+                    KcpSetting.Default.NoDelay = 1;
+                    KcpSetting.Default.NoDelayInterval = 1;
+                    KcpSetting.Default.NoDelayResend = 10;
+                    KcpSetting.Default.NoDelayNC = 1;
+                    KcpSetting.Default.SndWindowSize = 2048;
+                    KcpSetting.Default.RecWindowSize = 2048;
+                    KcpSetting.Default.MTU = Utilities.PackSettings.MAX_DATA_LEN;
                     form = new ClientKcp();
                     break;
                 default:

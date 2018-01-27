@@ -1,4 +1,5 @@
-﻿using System;
+﻿extern alias globalclient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,13 +10,15 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using k = KcpClient;
+using k = globalclient::KcpClient;
 using System.Runtime.InteropServices;
 using static Utilities.MakeTestBuff;
 namespace TestClient
 {
     public unsafe partial class ClientForm1 : Form
     {
+
+
         public ClientForm1()
         {
             InitializeComponent();
@@ -23,7 +26,7 @@ namespace TestClient
         #region MyRegion
 
         k.UdpClient client;
-        k.KcpClientEx clientex { get => client as KcpClient.KcpClientEx; }
+        k.KcpClientEx clientex { get => client as k.KcpClientEx; }
         IPEndPoint localipep;
         IPEndPoint remoteipep;
         #endregion
@@ -108,7 +111,7 @@ namespace TestClient
 
             };
 
-            client.Connect(remoteipep,true);
+            client.Connect(remoteipep, true);
         }
 
 
@@ -140,7 +143,7 @@ namespace TestClient
                 client.SendOperationRequest(BitConverter.GetBytes((UInt64)1));
             }
             else
-            {                
+            {
                 client.SendOperationRequest(MakeBigBuff());
             }
 

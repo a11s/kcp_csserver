@@ -1,4 +1,5 @@
-﻿using System;
+﻿extern alias globalclient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,9 +10,10 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using k = KcpClient;
+using k = globalclient::KcpClient;
 using System.Runtime.InteropServices;
 using static Utilities.MakeTestBuff;
+using System.Threading;
 
 namespace TestClient
 {
@@ -63,6 +65,7 @@ namespace TestClient
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            client?.DoWork();
             client?.Service();
         }
         bool withflush;
@@ -71,7 +74,7 @@ namespace TestClient
             if (client != null)
             {
                 client.Close();
-            }            
+            }
             client = new k.KcpClient("Test".ToCharArray().Select(a => (byte)a).ToArray(), 0, "kcppeerflush".ToCharArray().Select(a => (byte)a).ToArray());
             var arr = textBox_remote.Text.Split(":"[0]);
             remoteipep = new IPEndPoint(IPAddress.Parse(arr[0]), int.Parse(arr[1]));
@@ -88,7 +91,7 @@ namespace TestClient
             };
             withflush = checkBox_withflush.Checked == true;
 
-            client.Connect(remoteipep, true);
+            client.Connect(remoteipep, false);
         }
         private byte[] datebin;
         System.Diagnostics.Stopwatch sw;
@@ -101,21 +104,28 @@ namespace TestClient
             sw.Start();
             lastprinttime = DateTime.Now.AddSeconds(1);
             counter = 1;
-            client.SendOperationRequest(datebin);
-            if (withflush)
+            while (true)
             {
-                client.KcpFlush();
+                if (client.WaitSend > 1000)
+                {
+                    Application.DoEvents();
+                }
+                else
+                {
+
+                    client.SendOperationRequest(datebin);
+                    //if (withflush)
+                    //{
+                    //    client.KcpFlush();
+                    //}
+                }
+
             }
         }
         DateTime lastprinttime;
         void ReqArrival(byte[] bin)
         {
             counter++;
-            client.SendOperationRequest(datebin);
-            if (withflush)
-            {
-                client.KcpFlush();
-            }
             if (DateTime.Now.Subtract(lastprinttime).TotalMilliseconds > 1000)
             {
                 lastprinttime = lastprinttime.AddSeconds(1);

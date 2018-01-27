@@ -88,11 +88,22 @@ namespace KcpServer.Lite
 
         public void KcpFlush()
         {
-            if (kcp==null)
+            if (kcp == null)
             {
                 return;
             }
             ikcp_flush(kcp);
+        }
+        public int WaitSend
+        {
+            get
+            {
+                if (kcp != null)
+                {
+                    return ikcp_waitsnd(kcp);
+                }
+                return -1;
+            }
         }
     }
 }

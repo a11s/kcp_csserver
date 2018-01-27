@@ -1,4 +1,5 @@
-﻿using System;
+﻿extern alias globalclient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,7 +10,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using k = KcpClient;
+using k =globalclient::KcpClient;
 using System.Runtime.InteropServices;
 using static Utilities.MakeTestBuff;
 namespace TestClient

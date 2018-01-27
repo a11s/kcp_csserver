@@ -49,5 +49,6 @@ namespace KcpClient
             }
         }
 
+        public int MTU { get; set; } = Utilities.PackSettings.MAX_DATA_LEN;
     }
 }
